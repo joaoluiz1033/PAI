@@ -1,0 +1,9 @@
+First version of a board and pieces
+
+pieces are divided in each file. they are child function from piece.py
+
+In each piece we can return possible movements with the function check_moves
+
+This function reuturns a list with the posisble mover from the piece 
+
+The idea is to use this list to make a movement after in the board.py
