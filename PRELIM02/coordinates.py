@@ -38,7 +38,7 @@ def reconvert_to_alg(coord):
         return f"h{coord[1]+1}"
     
 if __name__ == "__main__":
-    [x,y] = convert_to_coordinate('b5')
+    [x,y] = convert_to_coordinate('d2')
     print(x,y)    
     pos = reconvert_to_alg([x,y])
     print(pos)

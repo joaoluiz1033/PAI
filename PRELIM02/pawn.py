@@ -6,6 +6,34 @@ Y_MAX = 7
 import pieces 
 import coordinates
 
+def pawn_moves(g_pos,add_x,add_y,l,board_map,team):   
+# describes general movement 
+#g_pos == current coordinates x,y
+#add_x, add_y == aditions coordinates in x,y
+#l == list with possible movements
+#board_map == board map with current pieces \
+    #board_map[y][x] is the correct use 
+#team == pieces' team (black or white)
+     
+    x = g_pos[0]
+    y = g_pos[1]
+    x_new = x + add_x
+    y_new = y + add_y
+    
+    limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
+    (y_new >= Y_MIN) and (y_new <= Y_MAX)
+    
+    if limits:
+        if (board_map[y_new][x_new] == None) or \
+            (board_map[y_new][x_new][0] != team):
+                possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
+                l.append(possible_move)
+                print(x_new,y_new)
+                print(coordinates.reconvert_to_alg([x_new,y_new]))
+                
+    
+    return l
+
 class pawn(pieces.pieces):
     #pawn class inheritance of class pieces
     def __init__(self,name,pos):
@@ -15,16 +43,18 @@ class pawn(pieces.pieces):
     def check_moves(self,board_map):
         #check and return possible movements from pawn 
         l = []
-        g_pos = coordinates.convert_to_coordinate(self.pos_alg)        
+        g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
+        x = g_pos[0]
+        y = g_pos[1]
         if self.team == 'w':
-            if  g_pos[1] < Y_MAX:
-                new_pos = [g_pos[0],g_pos[1]+1]                
+            if  y < Y_MAX:
+                y_new = y + 1                
         else:
-            if g_pos[1] > Y_MIN:
-                new_pos = [g_pos[0],g_pos[1]-1]
+            if y > Y_MIN:
+                y_new = y -1 
         
-        if board_map[new_pos[0]][new_pos[1]] is None:
-            possible_move = coordinates.reconvert_to_alg(new_pos)        
+        if board_map[y_new][x] is None:
+            possible_move = coordinates.reconvert_to_alg([x,y_new])        
             l.append(possible_move)
             
         return l

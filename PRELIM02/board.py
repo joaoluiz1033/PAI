@@ -8,7 +8,6 @@ import knight as n
 import bishop as b
 import queen as q
 import king as k
-
 import coordinates 
 
 class Board():
@@ -108,6 +107,8 @@ if __name__ == "__main__":
     b.prt()
     #b.move(pcs.pieces('wp','a2'),'a3')
     #b.prt()
+   # print(coordinates.convert_to_coordinate('a1'))
+    #print(b.board_map[1][3])
     l = b.round_moves()
     print(l)
     

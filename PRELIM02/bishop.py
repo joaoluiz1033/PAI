@@ -6,6 +6,44 @@ Y_MAX = 7
 import pieces 
 import coordinates
 
+
+def bishop_moves(g_pos,add_x,add_y,l,board_map,team):
+#describe a general movement for bishop logic
+#g_pos == current coordinates x,y
+#add_x, add_y == aditions coordinates in x,y
+#l == list with possible movements 
+#board_map == board map with current pieces \
+    #board_map[y][x] is the correct use 
+#team == pieces' team (black or white)  
+    found = False     
+    x = g_pos[0]
+    y = g_pos[1]
+    x_new = x + add_x
+    y_new = y + add_y
+    limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
+    (y_new >= Y_MIN) and (y_new <= Y_MAX)
+
+    while limits and (not found):      
+
+        if (board_map[y_new][x_new] is None):
+
+            possible_move = coordinates.reconvert_to_alg([x_new,y_new])        
+            l.append(possible_move)
+
+        else:
+            if (board_map[y_new][x_new][0] != team):
+                possible_move = coordinates.reconvert_to_alg([x_new,y_new])        
+                l.append(possible_move)
+            found = True
+
+        x_new += add_x
+        y_new += add_y
+        limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
+        (y_new >= Y_MIN) and (y_new <= Y_MAX)
+    
+   
+    return l
+
 class bishop(pieces.pieces):
     #bishop class inheritance of class pieces
     def __init__(self,name,pos):
@@ -18,88 +56,14 @@ class bishop(pieces.pieces):
         l = []
         g_pos = coordinates.convert_to_coordinate(self.pos_alg)    
         
-        # upright diagonal 
-        found = False
-        g_pos_aux = [g_pos[0],g_pos[1]]
-        limits = g_pos_aux[0] < X_MAX and g_pos_aux[1] < Y_MAX
-        
-        while limits and (not found):
-            g_pos_aux[0] += 1
-            g_pos_aux[1] += 1            
-            new_pos = g_pos_aux
-            if (board_map[new_pos[0]][new_pos[1]] is None):
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)        
-                    l.append(possible_move)
-                found = True
-            limits = g_pos_aux[0] < X_MAX and g_pos_aux[1] < Y_MAX
-        
-        #downpright diagonal 
-        found = False
-        g_pos_aux = [g_pos[0],g_pos[1]]
-        limits = g_pos_aux[0] < X_MAX and g_pos_aux[1] > Y_MIN
-        
-        while limits and not found:
-            g_pos_aux[0] += 1
-            g_pos_aux[1] += -1            
-            new_pos = g_pos_aux
-            if (board_map[new_pos[0]][new_pos[1]] is None):
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)        
-                    l.append(possible_move)
-                found = True
-            limits = g_pos_aux[0] < X_MAX and g_pos_aux[1] > Y_MIN
-        
-        # upleft diagonal 
-        found = False
-        g_pos_aux = [g_pos[0],g_pos[1]]
-        limits = g_pos_aux[0] > X_MIN and g_pos_aux[1] < Y_MAX
-        
-        while limits and not found:
-            g_pos_aux[0] += -1
-            g_pos_aux[1] += 1
-            
-            new_pos = g_pos_aux
-            if (board_map[new_pos[0]][new_pos[1]] is None):
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-                
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)        
-                    l.append(possible_move) 
-                    
-                found = True
-            limits = g_pos_aux[0] > X_MIN and g_pos_aux[1] < Y_MAX
-                
-        # downleft diagonal 
-        found = False
-        g_pos_aux = [g_pos[0],g_pos[1]]
-        limits = g_pos_aux[0] > X_MIN and g_pos_aux[1] > Y_MIN
-        
-        while limits and not found:
-            g_pos_aux[0] += -1
-            g_pos_aux[1] += -1            
-            new_pos = g_pos_aux
-            if (board_map[new_pos[0]][new_pos[1]] is None):
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)                    
-                    l.append(possible_move)
-                found = True
-            limits = g_pos_aux[0] > X_MIN and g_pos_aux[1] > Y_MIN
+        l = bishop_moves(g_pos,1,1,l,board_map,self.team) #upright diagonal        
+        l = bishop_moves(g_pos,1,-1,l,board_map,self.team) #downright 
+        l = bishop_moves(g_pos,-1,1,l,board_map,self.team) #upleft
+        l = bishop_moves(g_pos,-1,-1,l,board_map,self.team) #downleft
         return l
     
 if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
-    b1 = bishop('wp','d1')
+    b1 = bishop('wp','a1')
     l = b1.check_moves(board_map)
     print(l)
