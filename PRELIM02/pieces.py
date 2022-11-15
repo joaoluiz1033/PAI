@@ -11,7 +11,7 @@ class pieces():
         self.pos_alg = pos
         
     def __repr__(self):
-        return f"{self.name}"
+        return f"{self.name} at {self.pos_alg}"
     
     def __eq__(self,other):
         if other is None:

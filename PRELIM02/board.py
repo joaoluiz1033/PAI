@@ -68,22 +68,22 @@ class Board():
     def remove_piece(self,P): 
 #remove a single piece from board 
 #P == Piece to be removed         
-        team = P.name[0] 
+        team = P.team
         if team == 'w':
             l = self.whites_in_board
         else:
             l = self.blacks_in_board
         
-        if P in l :
-            idx = l.index(P)
+        if P in l :            
             self.dead_pieces.append(P)
-            l[idx] = None
+            l.remove(P)
         
     def move(self,l): 
 #this function moves pieces in board
 #if there is an enemy piece in the final destination
     #the enemy will be eliminated with remove_piece
 # l = list of possible movements         
+
         team = self.who_plays #white or black 
         valid = False
         a = random.choice(l) #piece that is going to move
@@ -101,16 +101,17 @@ class Board():
         
         if team == 'w':
             if p in self.whites_in_board:
-                p.pos_alg = b
-                possible_enemy = self.board_map[b_y][b_x]
-                if possible_enemy is not None:
-                    pass             
-                
+                p.pos_alg = b                         
             self.who_plays = 'b'
         else:
             if p in self.blacks_in_board:
                 p.pos_alg = b  
             self.who_plays = 'w'
+            
+        possible_enemy = self.board_map[b_y][b_x]
+        if possible_enemy is not None:
+            print(f"{possible_enemy} eated by {p}")
+            self.remove_piece(possible_enemy) #possible enemy is an enemy
         
         self.actual_board()
         
@@ -118,12 +119,14 @@ class Board():
         
         
     def round_moves(self):
-        # all possible movements 
+#this function goes to the white/black list of pieces in board
+    #and return all possible moves for each of those pieces
+#it calls all pieces classes (queen, king, rook, ...)
+
         if self.who_plays == 'w':
             l_pieces = self.whites_in_board
         else:
-            l_pieces = self.blacks_in_board
-        
+            l_pieces = self.blacks_in_board        
         l_move_poss = []
         
         for P in l_pieces: 
@@ -137,19 +140,21 @@ if __name__ == "__main__":
     #b.remove_piece(pcs.pieces('wr','a1'))
    #b.prt()
     i = 1    
-    while i < 5:
-        print(f"\n---------rodada {i}----------\n")
+    while i < 20:
+        print(f"\n-----------------------rodada {i}-----------------------\n")
         l = b.round_moves()
-        
+        print('-----------------Possible white moves\n',l)
         b.move(l)
         
         l = b.round_moves()
-        
+        print('\n-----------------Possible black moves\n',l)
         b.move(l)
         
         i += 1
-        
+        print('')
         b.prt()
+        
+    print(b.dead_pieces)
     
 
     

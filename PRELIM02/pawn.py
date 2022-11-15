@@ -31,18 +31,24 @@ def pawn_moves(g_pos,add_x,add_y,l,board_map,team):
     
     return l
 
+# for position in diags:
+#     if board_map[position[1]][position[0]] is not None:
+#         if board_map[position[1]][position[0]].team != self.team:
+#             l.append(coordinates.reconvert_to_alg(position)
+
 class pawn(pieces.pieces):
     #pawn class inheritance of class pieces
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
         
-    def diags_possible(self):
+    def diags_possible(self,board_map):
         diags=[]
         l = []
         g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
         x = g_pos[0]
         y = g_pos[1]
+        
         if self.team =='w':
             if y < 7:
                 if x == 0:
@@ -52,7 +58,8 @@ class pawn(pieces.pieces):
                 else:
                      diags.append([x-1,y+1])
                      diags.append([x+1,y+1])
-        if self.team =='b':
+                     
+        else:
           if y > 0:
               if x == 0:
                   diags.append([x+1,y-1])
@@ -61,21 +68,25 @@ class pawn(pieces.pieces):
               else:
                    diags.append([x-1,y-1])
                    diags.append([x+1,y-1])
-          return diags    
-
+       
+        for position in diags:
+            if board_map[position[1]][position[0]] is not None:
+                if board_map[position[1]][position[0]].team != self.team:
+                    l.append(coordinates.reconvert_to_alg(position))
+                    
+        return l
+                                 
                 
-              
-                
-            
             
         
-    
+
     def check_moves(self,board_map):
         #check and return possible movements from pawn 
         l = []
         g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
         x = g_pos[0]
         y = g_pos[1]
+        
         if self.team == 'w':
             if  y < Y_MAX:
                 y_new = y + 1                
@@ -86,6 +97,10 @@ class pawn(pieces.pieces):
         if board_map[y_new][x] is None:
             possible_move = coordinates.reconvert_to_alg([x,y_new])        
             l.append(possible_move)
+        diagonal_moves = self.diags_possible(board_map) 
+        
+        for diag in diagonal_moves:
+            l.append(diag)
             
         return l
 
