@@ -60,7 +60,7 @@ class king(pieces.pieces):
         coord=self.pos_alg
         checked=False 
         for sublist in moves:
-            if coor in sublist[1]:
+            if coord in sublist[1]:
                 checked=True 
                 break
         return checked 
