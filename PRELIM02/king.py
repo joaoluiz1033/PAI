@@ -55,6 +55,16 @@ class king(pieces.pieces):
         l = king_moves(g_pos,-1,1,l,board_map,self.team)
             
         return l
+        
+    def is_checked(self,moves):
+        coord=self.pos_alg
+        checked=False 
+        for sublist in moves:
+            if coor in sublist[1]:
+                checked=True 
+                break
+        return checked 
+            
     
 if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
