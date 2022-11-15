@@ -36,6 +36,42 @@ class pawn(pieces.pieces):
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
+        
+    def diags_possible(self):
+        diags=[]
+        l = []
+        g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
+        x = g_pos[0]
+        y = g_pos[1]
+        if self.team =='w':
+            if y < 7:
+                if x == 0:
+                    diags.append([x+1,y+1])
+                elif x == 7:
+                    diags.append([x-1,y+1])
+                else:
+                     diags.append([x-1,y+1])
+                     diags.append([x+1,y+1])
+          if self.team =='b':
+            if y > 0:
+                if x == 0:
+                    diags.append([x+1,y-1])
+                elif x == 7:
+                    diags.append([x-1,y-1])
+                else:
+                     diags.append([x-1,y-1])
+                     diags.append([x+1,y-1])
+            return diags
+          
+        
+         
+
+                
+              
+                
+            
+            
+        
     
     def check_moves(self,board_map):
         #check and return possible movements from pawn 

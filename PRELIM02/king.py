@@ -53,6 +53,7 @@ class king(pieces.pieces):
         l = king_moves(g_pos,-1,0,l,board_map,self.team)
         l = king_moves(g_pos,-1,1,l,board_map,self.team)
             
+
         return l
         
     def is_checked(self,moves):
@@ -63,6 +64,21 @@ class king(pieces.pieces):
                 checked=True 
                 break
         return 
+
+        return l
+        
+    def is_checked(self,moves):
+        coord=self.pos_alg
+        checked=False 
+        for sublist in moves:
+            if coord in sublist[1]:
+                checked=True 
+                break
+        return checked 
+        
+    def stalemate(self,moves):
+        return moves==[]
+
             
     
 if __name__ == "__main__":
