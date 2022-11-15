@@ -7,7 +7,7 @@ import pieces
 import coordinates
 
 def queen_moves(g_pos,add_x,add_y,l,board_map,team):
-#describe a general movement for bishop logic
+#describe a general movement for queen logic
 #g_pos == current coordinates x,y
 #add_x, add_y == aditions coordinates in x,y
 #l == list with possible movements 

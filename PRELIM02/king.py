@@ -28,8 +28,7 @@ def king_moves(g_pos,add_x,add_y,l,board_map,team):
             (board_map[y_new][x_new][0] != team):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
                 l.append(possible_move)
-                print(x_new,y_new)
-                print(coordinates.reconvert_to_alg([x_new,y_new]))
+                
                 
     
     return l
@@ -60,10 +59,10 @@ class king(pieces.pieces):
         coord=self.pos_alg
         checked=False 
         for sublist in moves:
-            if coor in sublist[1]:
+            if coord in sublist[1]:
                 checked=True 
                 break
-        return checked 
+        return 
             
     
 if __name__ == "__main__":

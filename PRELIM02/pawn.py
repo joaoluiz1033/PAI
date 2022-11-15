@@ -27,10 +27,7 @@ def pawn_moves(g_pos,add_x,add_y,l,board_map,team):
         if (board_map[y_new][x_new] == None) or \
             (board_map[y_new][x_new][0] != team):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
-                l.append(possible_move)
-                print(x_new,y_new)
-                print(coordinates.reconvert_to_alg([x_new,y_new]))
-                
+                l.append(possible_move)                
     
     return l
 

@@ -6,6 +6,42 @@ Y_MAX = 7
 import pieces 
 import coordinates
 
+def rook_moves(g_pos,add_x,add_y,l,board_map,team):
+#describe a general movement for rook logic
+#g_pos == current coordinates x,y
+#add_x, add_y == aditions coordinates in x,y
+#l == list with possible movements 
+#board_map == board map with current pieces \
+    #board_map[y][x] is the correct use 
+#team == pieces' team (black or white)  
+    found = False     
+    x = g_pos[0]
+    y = g_pos[1]
+    x_new = x + add_x
+    y_new = y + add_y
+    limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
+    (y_new >= Y_MIN) and (y_new <= Y_MAX)
+
+    while limits and (not found):      
+
+        if (board_map[y_new][x_new] is None):
+
+            possible_move = coordinates.reconvert_to_alg([x_new,y_new])        
+            l.append(possible_move)
+
+        else:
+            if (board_map[y_new][x_new][0] != team):
+                possible_move = coordinates.reconvert_to_alg([x_new,y_new])        
+                l.append(possible_move)
+            found = True
+
+        x_new += add_x
+        y_new += add_y
+        limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
+        (y_new >= Y_MIN) and (y_new <= Y_MAX)    
+   
+    return l
+
 class rook(pieces.pieces):
     #rook class inheritance of class pieces
     def __init__(self,name,pos):
@@ -18,75 +54,10 @@ class rook(pieces.pieces):
         l = []
         g_pos = coordinates.convert_to_coordinate(self.pos_alg)
         
-        # checking postions going to the right
-        found = False
-        g_pos_aux = g_pos[0]
-        limits = g_pos_aux < X_MAX
-        
-        while limits and (not found):            
-            g_pos_aux = g_pos_aux + 1
-            new_pos = [g_pos_aux,g_pos[1]]
-            if (board_map[new_pos[0]][new_pos[1]] is None):                
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)        
-                    l.append(possible_move)
-                found = True
-            limits = g_pos_aux < X_MAX
-                
-        # checking postions going to the left
-        found = False 
-        g_pos_aux = g_pos[0]
-        limits = g_pos_aux > X_MIN
-        while limits and (not found):
-            g_pos_aux = g_pos_aux - 1
-            new_pos = [g_pos_aux,g_pos[1]]
-            if (board_map[new_pos[0]][new_pos[1]] is None):
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)        
-                    l.append(possible_move)
-                found = True
-            limits = g_pos_aux > X_MIN
-                
-        #checking positions going down 
-        found = False 
-        g_pos_aux = g_pos[1] #y direction
-        limits = g_pos_aux > Y_MIN
-        while limits and (not found):
-            g_pos_aux = g_pos_aux - 1
-            new_pos = [g_pos[0],g_pos_aux]
-            if (board_map[new_pos[0]][new_pos[1]] is None):
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)        
-                    l.append(possible_move)
-                found = True
-            limits = g_pos_aux > Y_MIN
-                
-        #checking positions going up 
-        found = False 
-        g_pos_aux = g_pos[1] #y direction
-        limits = g_pos_aux < Y_MAX
-        
-        while limits and (not found):
-            g_pos_aux = g_pos_aux + 1
-            new_pos = [g_pos[0],g_pos_aux]
-            if (board_map[new_pos[0]][new_pos[1]] is None):
-                possible_move = coordinates.reconvert_to_alg(new_pos)        
-                l.append(possible_move)
-            else:
-                if (board_map[new_pos[0]][new_pos[1]][0] != self.team):
-                    possible_move = coordinates.reconvert_to_alg(new_pos)        
-                    l.append(possible_move)
-                found = True
-            limits = g_pos_aux < Y_MAX
+        l = rook_moves(g_pos,0,1,l,board_map,self.team) #up direction        
+        l = rook_moves(g_pos,0,-1,l,board_map,self.team) #down direction 
+        l = rook_moves(g_pos,1,0,l,board_map,self.team) #right
+        l = rook_moves(g_pos,-1,0,l,board_map,self.team) #left
                 
         return l
 

@@ -1,5 +1,6 @@
 
 import numpy as np
+import random 
 
 import pieces as pcs
 import pawn as p
@@ -36,8 +37,10 @@ class Board():
     
         self.dead_pieces = [] #dead pieces 
         self.who_plays = 'w' # who is playing 
-            
+        self.actual_board()    
+        
     def actual_board(self): #put actual pieces in board 
+        self.board_map = [ [ None for x in range(8) ] for y in range(8)]
         for pic in self.whites_in_board: #putting whites in board to display
             
             if pic is not None:
@@ -48,9 +51,9 @@ class Board():
             if pic is not None:
                 coord = coordinates.convert_to_coordinate(pic.pos_alg)
                 self.board_map[coord[1]][coord[0]] = pic.name
-    
+        
     def prt(self): # print board 
-        self.actual_board()
+        
         for x in range(8):
             l = self.board_map[7-x]
             for y in l:
@@ -77,15 +80,34 @@ class Board():
             self.dead_pieces.append(P)
             l[idx] = None
         
-    def move(self,P,m1): 
-        #  move piece P in the board 
-        team = P.name[0]
+    def move(self,l): 
+#this function moves pieces in board
+# l = list of possible movements 
+        
+        team = self.who_plays #white or black 
+        valid = False
+        a = random.choice(l) #piece that is going to move
+        while valid == False:
+            if len(a[1]) != 0:
+                p = a[0] #piece
+                b = random.choice(a[1]) #random choice from possible moves
+                valid = True
+            else:
+                a = random.choice(l)
+        
         if team == 'w':
-            l = self.whites_in_board
+            if p in self.whites_in_board:
+                p.pos_alg = b
+            self.who_plays = 'b'
         else:
-            l = self.blacks_in_board
-        idx = l.index(P)
-        l[idx].move(m1)
+            if p in self.blacks_in_board:
+                p.pos_alg = b  
+            self.who_plays = 'w'
+        
+        self.actual_board()
+        
+                
+        
         
     def round_moves(self):
         # all possible movements 
@@ -95,6 +117,7 @@ class Board():
             l_pieces = self.blacks_in_board
         
         l_move_poss = []
+        
         for P in l_pieces: 
             l_move_poss.append([P,P.check_moves(self.board_map)])
             
@@ -104,13 +127,23 @@ class Board():
 if __name__ == "__main__":
     b = Board()
     #b.remove_piece(pcs.pieces('wr','a1'))
-    b.prt()
-    #b.move(pcs.pieces('wp','a2'),'a3')
-    #b.prt()
-   # print(coordinates.convert_to_coordinate('a1'))
-    #print(b.board_map[1][3])
-    l = b.round_moves()
-    print(l)
+   #b.prt()
+    i = 1    
+    while i < 5:
+        print(f"\n---------rodada {i}----------\n")
+        l = b.round_moves()
+        
+        b.move(l)
+        
+        l = b.round_moves()
+        
+        b.move(l)
+        
+        i += 1
+        
+        b.prt()
+    
+
     
 
                   
