@@ -45,12 +45,12 @@ class Board():
             
             if pic is not None:
                 coord = coordinates.convert_to_coordinate(pic.pos_alg)
-                self.board_map[coord[1]][coord[0]] = pic.name
+                self.board_map[coord[1]][coord[0]] = pic
             
         for pic in self.blacks_in_board: #putting black in board to display
             if pic is not None:
                 coord = coordinates.convert_to_coordinate(pic.pos_alg)
-                self.board_map[coord[1]][coord[0]] = pic.name
+                self.board_map[coord[1]][coord[0]] = pic
         
     def prt(self): # print board 
         
@@ -61,29 +61,29 @@ class Board():
                 if y == None:
                     print('.  ',end='')
                 else:
-                    print(y+' ',end='')                
+                    print(y.name+' ',end='')                
             print('\n')
         return 
     
     def remove_piece(self,P): 
-        #remove a single piece from board 
-        #P is the piece to be removed
-        
+#remove a single piece from board 
+#P == Piece to be removed         
         team = P.name[0] 
         if team == 'w':
             l = self.whites_in_board
         else:
             l = self.blacks_in_board
-        a = P in l #cheking if the piece is in place
-        if a == True :
+        
+        if P in l :
             idx = l.index(P)
             self.dead_pieces.append(P)
             l[idx] = None
         
     def move(self,l): 
 #this function moves pieces in board
-# l = list of possible movements 
-        
+#if there is an enemy piece in the final destination
+    #the enemy will be eliminated with remove_piece
+# l = list of possible movements         
         team = self.who_plays #white or black 
         valid = False
         a = random.choice(l) #piece that is going to move
@@ -95,9 +95,17 @@ class Board():
             else:
                 a = random.choice(l)
         
+        b_coord = coordinates.convert_to_coordinate(b)
+        b_x = b_coord[0]
+        b_y = b_coord[1]
+        
         if team == 'w':
             if p in self.whites_in_board:
                 p.pos_alg = b
+                possible_enemy = self.board_map[b_y][b_x]
+                if possible_enemy is not None:
+                    pass             
+                
             self.who_plays = 'b'
         else:
             if p in self.blacks_in_board:

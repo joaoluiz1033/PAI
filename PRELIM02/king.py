@@ -25,7 +25,7 @@ def king_moves(g_pos,add_x,add_y,l,board_map,team):
     
     if limits:
         if (board_map[y_new][x_new] == None) or \
-            (board_map[y_new][x_new][0] != team):
+            (board_map[y_new][x_new].team != team):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
                 l.append(possible_move)
                 

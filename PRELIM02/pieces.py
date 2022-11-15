@@ -11,10 +11,13 @@ class pieces():
         self.pos_alg = pos
         
     def __repr__(self):
-        return f"{self.name} at {self.pos_alg}"
+        return f"{self.name}"
     
     def __eq__(self,other):
-        return self.name == other.name and self.pos_alg == other.pos_alg
+        if other is None:
+            return False
+        else:
+            return self.name == other.name and self.pos_alg == other.pos_alg
     
     def check_moves(self,board_map):
         pass

@@ -52,19 +52,16 @@ class pawn(pieces.pieces):
                 else:
                      diags.append([x-1,y+1])
                      diags.append([x+1,y+1])
-          if self.team =='b':
-            if y > 0:
-                if x == 0:
-                    diags.append([x+1,y-1])
-                elif x == 7:
-                    diags.append([x-1,y-1])
-                else:
-                     diags.append([x-1,y-1])
-                     diags.append([x+1,y-1])
-            return diags
-          
-        
-         
+        if self.team =='b':
+          if y > 0:
+              if x == 0:
+                  diags.append([x+1,y-1])
+              elif x == 7:
+                  diags.append([x-1,y-1])
+              else:
+                   diags.append([x-1,y-1])
+                   diags.append([x+1,y-1])
+          return diags    
 
                 
               
