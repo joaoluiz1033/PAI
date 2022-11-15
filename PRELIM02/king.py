@@ -64,6 +64,9 @@ class king(pieces.pieces):
                 checked=True 
                 break
         return checked 
+        
+    def stalemate(self,moves):
+        return moves==[]
             
     
 if __name__ == "__main__":
