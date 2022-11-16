@@ -1,6 +1,8 @@
 
 import numpy as np
 import random 
+import datetime 
+import os 
 
 import pieces as pcs
 import pawn as p
@@ -10,6 +12,36 @@ import bishop as b
 import queen as q
 import king as k
 import coordinates 
+
+def convert_notation(move): 
+    move=move.split('_')
+    piece=move[0][1]
+    debut=move[1]
+    fin=move[2]
+    if piece == 'p':
+        piece=''
+    else:
+        piece= piece.upper() 
+    return piece+debut+fin
+        
+
+def convert_pgn(moves):
+    myDate=datetime.datetime.now()
+    name_of_file=myDate.strftime('%Y_%m_%d_%H_%M_%S')
+    path=os.getcwd()+'\\parties\\'
+    f=open(path+name_of_file+'txt','w')
+    i=1
+    count=0
+    for move in moves:
+        move2=convert_notation(move)
+        if count%2 == 0:
+            f.write(str(i)+move2+' ')
+            count+=1
+        else:
+            f.write(move2+'\n')
+            count+=1
+            i=i+1
+    f.close()
 
 class Board():
     
@@ -25,6 +57,7 @@ class Board():
                                 p.pawn('wp','e2'), p.pawn('wp','f2'),
                                 p.pawn('wp','g2'), p.pawn('wp','h2')] 
         
+        self.w_king_idx = 4
         #defining blacks
         self.blacks_in_board = [r.rook('br','a8'), n.knight('bn','b8'), 
                                 b.bishop('bb','c8'), q.queen('bq', 'd8'),
@@ -34,7 +67,9 @@ class Board():
                                 p.pawn('bp','c7'), p.pawn('bp','d7'),
                                 p.pawn('bp','e7'), p.pawn('bp','f7'),
                                 p.pawn('bp','g7'), p.pawn('bp','h7')]       
-    
+        self.b_king_idx = 4
+        self.history = [] #history of moves
+
         self.dead_pieces = [] #dead pieces 
         self.who_plays = 'w' # who is playing 
         self.actual_board()    
@@ -71,11 +106,16 @@ class Board():
         team = P.team
         if team == 'w':
             l = self.whites_in_board
+            m_idx = self.w_king_idx
         else:
             l = self.blacks_in_board
+            m_idx = self.b_king_idx
         
         if P in l :            
             self.dead_pieces.append(P)
+            idx = l.index(P)
+            if idx < 4:
+                m_idx -= 1
             l.remove(P)
         
     def move(self,l): 
@@ -125,14 +165,132 @@ class Board():
 
         if self.who_plays == 'w':
             l_pieces = self.whites_in_board
+            
         else:
-            l_pieces = self.blacks_in_board        
+            l_pieces = self.blacks_in_board
+            
         l_move_poss = []
         
         for P in l_pieces: 
             l_move_poss.append([P,P.check_moves(self.board_map)])
             
         return l_move_poss
+    
+    
+    def king_getout_check(self,l_move_king,l_enemies):
+#this function verifies if a king can move to get out of check
+#l_move_king == all possible moves from king
+#l_enemies == all possible enemies moves
+        
+        for enemies_mov in l_enemies:  #for all enemies \
+            #[piece, possible movements]
+                for movements in l_move_king: #for the king's \
+                    # movement
+                        if movements in enemies_mov[1]: 
+                            #if possible scape in enemies movement
+                            l_move_king.remove(movements) #removing\
+                                #king movement (dont get out of check)
+    
+        return l_move_king
+    
+    def move_sacrifice(self, l_enemies,l_king,l_move_poss):
+#verificar se as posicoes possiveis podem estar entre a peça e rei        
+        l = []
+        enemies = l_king.checker_pos(l_enemies)
+        
+        if len(enemies) != 1: #a sacrifice cannot be made
+            return []
+        else:
+            pos = enemies[0] #position of the enemie that puts us in check
+            l = coordinates.get_one_to_other(l_king.pos_alg, pos)
+        return l
+    
+    
+    def round_check_moves(self,l_enemies):
+#this function defines movement when the king is in check and return \
+#a list of possible movements. If in check, we verify the possible \
+#king movements and if other piece can 'make a sacrifice'
+#l_enemies == list of enemies movements
+        
+        l_move_poss = []        
+        l_outof_check = []
+        l_sacrifice = []
+        if self.who_plays == 'w':
+            l_pieces = self.whites_in_board
+            m_indx = self.w_king_idx
+        else:
+            l_pieces = self.blacks_in_board        
+            m_indx = self.b_king_idx
+        
+        l_move_poss = self.round_moves() #all possible moves
+        l_king = l_pieces[m_indx] #king in check 
+        
+        for sublist in l_move_poss: #for all [piece,possible movements]
+            if sublist[0] == l_king: #check if piece == king
+                l_move_king = sublist[1]
+                l_move_poss = self.king_getout_check(l_move_king,l_enemies)
+                l_outof_check += [l_king,l_move_poss] 
+                
+            else: #not king, verifies potential sacrifice
+                l_sacrifice = self.move_sacrifice(l_enemies,l_king,l_move_poss)
+                l_outof_check += l_sacrifice
+                
+        return l_outof_check
+        
+    # def short_castle(self):
+    #     history= self.history
+    #     map = self.board_map
+    #     valid2=True 
+    #     if self.who_plays == 'w' :
+    #         no_beetween = ( map[5][1] == None and maps[6][1] == None)
+    #         for moves in history:
+    #             if 'wra1' in moves or 'wke1' in moves:
+    #                 valid2 = False
+    #                 break
+    #     if self.who_plays == 'b' :
+    #         no_beetween=( map[5][7] == None and maps[6][7] == None)
+    #         for moves in history:
+    #             if 'bra8' in moves or 'bke8' in moves:
+    #                 valid2 = False
+    #     return no_beetween and valid 2
+    
+    def game(self):
+#this function simulates a game of chess untill a possible checkmate
+# check == 2 means check mate, == 1 means check, == 0 not check        
+        check = 0
+        team = self.who_plays
+        
+        #first movement made in board 
+        l = self.round_moves()
+        l_check = [] #possible moves to get out of check
+        self.move(l)
+        i = 1
+        #next moves need to be checked (minimum moves for check mate?)
+        while check < 2 or i < 200:           
+            
+            if team == 'w':
+                king = self.whites_in_board[self.w_king_idx]                
+            else:
+                king = self.blacks_in_board[self.b_king_idx]
+            
+            check = king.is_checked(l) #cheking if A king is in check \
+                #with possible moves of B team 
+            
+            if check == 0: #if not in check, move normally
+                l = self.round_moves()
+                self.move(l)
+                
+            if check == 1: #if in check, give possile moves to get out
+                l_check = self.round_check_moves(king,l)
+                if len(l_check) == 0:
+                    check = 2
+                else:
+                    self.move(l_check)
+            
+            i += 1
+            
+        
+        
             
  
 if __name__ == "__main__":
@@ -140,7 +298,7 @@ if __name__ == "__main__":
     #b.remove_piece(pcs.pieces('wr','a1'))
    #b.prt()
     i = 1    
-    while i < 20:
+    while i < 200:
         print(f"\n-----------------------rodada {i}-----------------------\n")
         l = b.round_moves()
         print('-----------------Possible white moves\n',l)
@@ -154,7 +312,7 @@ if __name__ == "__main__":
         print('')
         b.prt()
         
-    print(b.dead_pieces)
+    print(b.history)
     
 
     

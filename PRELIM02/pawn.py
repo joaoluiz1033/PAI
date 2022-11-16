@@ -87,20 +87,28 @@ class pawn(pieces.pieces):
         x = g_pos[0]
         y = g_pos[1]
         
+        
         if self.team == 'w':
             if  y < Y_MAX:
-                y_new = y + 1                
+                y_new = y + 1   
+                if board_map[y_new][x] is None:
+                    possible_move = coordinates.reconvert_to_alg([x,y_new])        
+                    l.append(possible_move)
+                diagonal_moves = self.diags_possible(board_map) 
+                
+                for diag in diagonal_moves:
+                    l.append(diag)
         else:
             if y > Y_MIN:
-                y_new = y -1 
+                y_new = y - 1 
+                if board_map[y_new][x] is None:
+                    possible_move = coordinates.reconvert_to_alg([x,y_new])        
+                    l.append(possible_move)
+                diagonal_moves = self.diags_possible(board_map) 
+                
+                for diag in diagonal_moves:
+                    l.append(diag)
         
-        if board_map[y_new][x] is None:
-            possible_move = coordinates.reconvert_to_alg([x,y_new])        
-            l.append(possible_move)
-        diagonal_moves = self.diags_possible(board_map) 
-        
-        for diag in diagonal_moves:
-            l.append(diag)
             
         return l
 
