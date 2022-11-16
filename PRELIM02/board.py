@@ -1,4 +1,3 @@
-
 import numpy as np
 import random 
 import datetime 
@@ -12,6 +11,41 @@ import bishop as b
 import queen as q
 import king as k
 import coordinates 
+import datetime
+import os
+
+def convert_notation(move): 
+    move=move.split('_')
+    piece=move[0][1]
+    debut=move[1]
+    fin=move[2]
+    if piece == 'p':
+        piece=''
+    else:
+        piece= piece.upper() 
+    return piece+debut+fin
+        
+
+def convert_pgn(moves):
+    myDate=datetime.datetime.now()
+    name_of_file=myDate.strftime('%Y_%m_%d_%H_%M_%S')
+    path=os.getcwd()+'\\parties\\'
+    f=open(path+name_of_file+'txt','w')
+    i=1
+    count=0
+    for move in moves:
+        move2=convert_notation(move)
+        if count%2 == 0:
+            f.write(str(i)+move2+' ')
+            count+=1
+        else:
+            f.write(move2+'\n')
+            count+=1
+            i=i+1
+    f.close()
+        
+    
+        
 
 def convert_notation(move): 
     move=move.split('_')
@@ -67,12 +101,16 @@ class Board():
                                 p.pawn('bp','c7'), p.pawn('bp','d7'),
                                 p.pawn('bp','e7'), p.pawn('bp','f7'),
                                 p.pawn('bp','g7'), p.pawn('bp','h7')]       
+
         self.b_king_idx = 4
-        self.history = [] #history of moves
+        
 
         self.dead_pieces = [] #dead pieces 
+    
+        self.history = [] #history of moves
         self.who_plays = 'w' # who is playing 
-        self.actual_board()    
+        self.actual_board()  
+        self.dead_pieces=[] #dead pieces
         
     def actual_board(self): #put actual pieces in board 
         self.board_map = [ [ None for x in range(8) ] for y in range(8)]
@@ -130,7 +168,9 @@ class Board():
         while valid == False:
             if len(a[1]) != 0:
                 p = a[0] #piece
-                b = random.choice(a[1]) #random choice from possible moves
+                pos=p.pos_alg
+                b = random.choice(a[1])#random choice from possible moves
+                self.history.append(p.name+'_'+pos+'_'+b)
                 valid = True
             else:
                 a = random.choice(l)
@@ -155,6 +195,25 @@ class Board():
         
         self.actual_board()
         
+    # def short_castle(self):
+    #     history= self.history
+    #     map = self.board_map
+    #     valid2=True 
+    #     if self.who_plays == 'w' :
+    #         no_beetween = ( map[5][1] == None and maps[6][1] == None)
+    #         for moves in history:
+    #             if 'wra1' in moves or 'wke1' in moves:
+    #                 valid2 = False
+    #                 break
+    #     if self.who_plays == 'b' :
+    #         no_beetween=( map[5][7] == None and maps[6][7] == None)
+    #         for moves in history:
+    #             if 'bra8' in moves or 'bke8' in moves:
+    #                 valid2 = False
+    #     return no_beetween and valid 2
+            
+     
+                    
                 
         
         
@@ -174,6 +233,7 @@ class Board():
         for P in l_pieces: 
             l_move_poss.append([P,P.check_moves(self.board_map)])
             
+
         return l_move_poss
     
     
@@ -287,11 +347,15 @@ class Board():
                 else:
                     self.move(l_check)
             
-            i += 1
-            
+            i += 1            
+
+        return l_check
         
+    
+
+
         
-            
+
  
 if __name__ == "__main__":
     b = Board()
@@ -313,15 +377,3 @@ if __name__ == "__main__":
         b.prt()
         
     print(b.history)
-    
-
-    
-
-                  
-   
-        
-     
-        
-        
-        
-        
