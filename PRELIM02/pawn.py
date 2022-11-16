@@ -75,8 +75,18 @@ class pawn(pieces.pieces):
                     l.append(coordinates.reconvert_to_alg(position))
                     
         return l
-                                 
-                
+                   
+    def two_square(self,board_map):
+    g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
+    x = g_pos[0]
+    y = g_pos[1]
+    l=[]
+    if self.team == 'w'  and y == 1 and board_map[x][y+1] is  None and board_map[x][y+2] is  None :
+        l.append(coordinates.reconvert_to_alg([x,y+2]))
+    elif self.team == 'b' and y == 6 and board_map[x][y-1] is  None and board_map[x][y-2] is  None :
+        l.append(coordinates.reconvert_to_alg([x,y-2]))
+    return l
+
             
         
 
@@ -110,7 +120,7 @@ class pawn(pieces.pieces):
                     l.append(diag)
         
             
-        return l
+        return l+(self.two_square(board_map))
 
 if __name__ == "__main__":
     #p = pieces('wk','a1')
