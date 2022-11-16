@@ -152,6 +152,25 @@ class Board():
         
         self.actual_board()
         
+    def short_castle(self):
+        history= self.history
+        map = self.board_map
+        valid2=True 
+        if self.who_plays == 'w' :
+            no_beetween = ( map[5][1] == None and maps[6][1] == None)
+            for moves in history:
+                if 'wra1' in moves or 'wke1' in moves:
+                    valid2 = False
+                    break
+        if self.who_plays == 'b' :
+            no_beetween=( map[5][7] == None and maps[6][7] == None)
+            for moves in history:
+                if 'bra8' in moves or 'bke8' in moves:
+                    valid2 = False
+        return no_beetween and valid 2
+            
+     
+                    
                 
         
         
@@ -170,6 +189,8 @@ class Board():
             l_move_poss.append([P,P.check_moves(self.board_map)])
             
         return l_move_poss
+        
+    
 
 
         
