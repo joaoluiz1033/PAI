@@ -1,5 +1,6 @@
 
 def convert_to_coordinate(alg):
+    
     if alg[0] == 'a':
         return [0,int(alg[1])-1]
     if alg[0] == 'b':
@@ -91,7 +92,8 @@ def get_one_to_other(alg1,alg2):
     return l
     
 if __name__ == "__main__":
-    [x,y] = convert_to_coordinate('d2')
-       
+    
+    [x,y] = convert_to_coordinate('a6')       
     pos = reconvert_to_alg([x,y])
+    print(pos)
     

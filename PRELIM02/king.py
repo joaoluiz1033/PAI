@@ -69,25 +69,33 @@ class king(pieces.pieces):
 #                 break
 #         return checked 
     def is_checked(self,enemy_moves):
-#this function verifies if king is checked and where it can go 
-#enemy_moves == list of possible movements from enemies 
-        #l_king = [] #all possible moves for the king 
+        '''
+        this function verifies if king is checked and where it can go 
+
+        Parameters
+        ----------
+        enemy_moves : List
+            possible movements from enemies.
+
+        Returns
+        -------
+        True if king is in check, False otherwise.
+
+        '''
         
         king_pos = self.pos_alg
         
-        # l_king = self.check_moves(board_map)
-        
-        i = 0
-        
+        # l_king = self.check_moves(board_map)       
+              
         for sublist in enemy_moves:
             if king_pos in sublist[1]: #verifying if king is in check
-            
-                i += 1
+                #print(enemy_moves[i])
+                return True
             # for movements in l_king:
             #     if movements in sublist[1]: #verifying if king can escape
             #         l_king.remove(movements) #removing this movement
         
-        return i
+        
 
     def checker_pos(self,enemy_moves):
 #return the position of the enemy piece that puts us in check
@@ -110,4 +118,4 @@ if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
     k1 = king('wp','d5')
     l = k1.check_moves(board_map)
-    print(l[0])
+    print(len(k1))

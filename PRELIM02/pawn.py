@@ -6,14 +6,24 @@ Y_MAX = 7
 import pieces 
 import coordinates
 
-def pawn_moves(g_pos,add_x,add_y,l,board_map,team):   
-# describes general movement 
-#g_pos == current coordinates x,y
-#add_x, add_y == aditions coordinates in x,y
-#l == list with possible movements
-#board_map == board map with current pieces \
-    #board_map[y][x] is the correct use 
-#team == pieces' team (black or white)
+def pawn_moves(g_pos,add_x,add_y,l,board_map,team):
+    '''
+    describes general movement 
+
+    Parameters
+    ----------
+    g_pos : current coordinates x,y
+    add_x,y : aditions coordinates in x,y    
+    l : list with possible movements
+    board_map : board map with current pieces \
+        board_map[y][x] is the correct use 
+    team : pieces' team (black or white)
+
+    Returns
+    -------
+    l : list with possible movements
+
+    '''
      
     x = g_pos[0]
     y = g_pos[1]
@@ -31,13 +41,11 @@ def pawn_moves(g_pos,add_x,add_y,l,board_map,team):
     
     return l
 
-# for position in diags:
-#     if board_map[position[1]][position[0]] is not None:
-#         if board_map[position[1]][position[0]].team != self.team:
-#             l.append(coordinates.reconvert_to_alg(position)
+
 
 class pawn(pieces.pieces):
     #pawn class inheritance of class pieces
+    
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
@@ -129,5 +137,6 @@ if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
     pw1 = pawn('wp','a2')
     l = pw1.check_moves(board_map)
-    print(l)
+    pw2 = pawn('wp','a2')
+    print(pw1.name)
     

@@ -26,7 +26,7 @@ def knight_moves(g_pos,add_x,add_y,l,board_map,team):
     
     if limits:
         if (board_map[y_new][x_new] == None) or \
-            (board_map[y_new][x_new].team != team):
+            (board_map[y_new][x_new].team != team ):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
                 l.append(possible_move)
                 
@@ -65,4 +65,4 @@ if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
     n1 = knight('wp','b1')
     l = n1.check_moves(board_map)
-    print(l)
+    print(len(n1))
