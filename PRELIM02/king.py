@@ -94,7 +94,7 @@ class king(pieces.pieces):
             # for movements in l_king:
             #     if movements in sublist[1]: #verifying if king can escape
             #         l_king.remove(movements) #removing this movement
-        
+        return False
         
 
     def checker_pos(self,enemy_moves):

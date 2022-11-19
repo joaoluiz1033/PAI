@@ -28,7 +28,22 @@ def is_empty(l):
    
 
     '''
-    return           
+    i = 0
+    if len(l) == 0 or l is None:
+        return True
+    else:        
+        
+        for x in l:                        
+            piece = x[0]
+            movements = x[1]
+            if len(movements) == 0:
+                i += 1
+        if i == len(l):
+            
+            return True
+        else: 
+            return False
+          
 
     
         
@@ -153,27 +168,119 @@ class Board():
         return l_move_poss
     
     
-    def move(self,possible_moves):
+    def move(self,l_possible_moves):
+        '''
         
+
+        Parameters
+        ----------
+        l_possible_moves : LIST
+            LIST OF POSSIBLE MOVES FOR THE PLAYER.
+
+        Returns
+        -------
+        l_possible_moves : LIST
+            POSSIBLE MOVES MODIFIED (RECENT MOVE DELETED).
+
+        '''
+        a = False
         l1 = []
         
-        
-        if is_empty(possible_moves):
-            return possible_moves
+        # print(self.who_plays,l_possible_moves)
+        if is_empty(l_possible_moves):
+            return l_possible_moves
         else:
             
             if self.who_plays == 'w':
                 pieces_board = self.whites_in_board
+                enemies_board = self.blacks_in_board
                 king = self.w_king
                 self.who_plays = 'b'
             else:
                 pieces_board = self.blacks_in_board
+                enemies_board = self.whites_in_board
                 king = self.b_king
                 self.who_plays = 'w'
             
             valid = False
             while not valid:
-                l = random.choice(possible_moves)
+                l = random.choice(l_possible_moves)
+                piece = l[0]
+                if len(l[1]) > 0:
+                    valid = True
+                    
+            movement = random.choice(l[1])
+            # l_copy = copy.deepcopy(l_possible_moves)
+            l[1].remove(movement)
+            
+            movement_xy = coordinates.convert_to_coordinate(movement)
+            x = movement_xy [0]
+            y = movement_xy [1]
+            
+            
+            if piece in pieces_board:
+                #print(f"{piece} to {movement}")                
+                if self.board_map[y][x] is not None:                    
+                    if self.board_map[y][x].name[1] == 'k':
+                        return []
+                        # print(self.board_map[y][x].is_checked(l_copy))
+                        # print(f"{self.board_map[y][x]} eliminated at {movement}")
+                        # self.prt()
+                        # print(l_copy)
+                        # print(self.who_plays)
+                                                           
+                    enemies_board.remove(self.board_map[y][x])
+                    # print(f"{self.board_map[y][x]} eliminated at {movement}")
+                idx = pieces_board.index(piece)
+                pieces_board[idx].pos_alg = movement
+                
+                if piece.name[1] == 'k':
+                    king.pos_alg = movement    
+                
+            self.actual_board()
+            
+            if a:
+                return []
+            else:
+                return l_possible_moves
+
+    def move2(self,l_possible_moves):
+        '''
+        
+    
+        Parameters
+        ----------
+        l_possible_moves : LIST
+            LIST OF POSSIBLE MOVES FOR THE PLAYER.
+    
+        Returns
+        -------
+        l_possible_moves : LIST
+            POSSIBLE MOVES MODIFIED (RECENT MOVE DELETED).
+    
+        '''
+        
+        l1 = []
+        
+        # print(self.who_plays,l_possible_moves)
+        if is_empty(l_possible_moves):
+            return l_possible_moves
+        else:
+            
+            if self.who_plays == 'w':
+                pieces_board = self.whites_in_board
+                enemies_board = self.blacks_in_board
+                king = self.w_king
+                self.who_plays = 'b'
+            else:
+                pieces_board = self.blacks_in_board
+                enemies_board = self.whites_in_board
+                king = self.b_king
+                self.who_plays = 'w'
+            
+            valid = False
+            while not valid:
+                l = random.choice(l_possible_moves)
                 piece = l[0]
                 if len(l[1]) > 0:
                     valid = True
@@ -186,23 +293,75 @@ class Board():
             x = movement_xy [0]
             y = movement_xy [1]
             
+            
             if piece in pieces_board:
-                print(f"{piece} to {movement}")
+                #print(f"{piece} to {movement}")                
+                if self.board_map[y][x] is not None:
+                    if self.board_map[y][x].name[1] == 'k':
+                        print(self.board_map[y][x])
+                        self.prt()                                       
+                    enemies_board.remove(self.board_map[y][x])
+                    print(f"{self.board_map[y][x]} eliminated at {movement}")
                 idx = pieces_board.index(piece)
                 pieces_board[idx].pos_alg = movement
-                if piece == king:
-                    king.pos_alg = movement
-                if self.board_map[y][x] is not None:
-                    print(self.board_map[y][x],pieces_board)
-                    pieces_board.remove(self.board_map[y][x])
-                    print(f"{self.board_map[y][x]} eliminated at \
-                          {movement}")
+                if piece.name[1] == 'k':
+                    #print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+                    king.pos_alg = movement    
                 
+            self.actual_board()
             
-            return possible_moves
+            return l_possible_moves
+
     
-    def simulate_check(self,possible_moves):
-        return
+    def simulate_check(self,possible_moves,enemy_moves):      
+        
+        team = self.who_plays   
+        valid_list = []
+        for x in possible_moves:            
+            piece = x[0]
+            movements = x[1]
+            valid_movements = []
+            for movement in movements:
+                b_simulation = copy.deepcopy(self)
+                movement_xy = coordinates.convert_to_coordinate(movement)
+                x = movement_xy [0]
+                y = movement_xy [1]
+                
+                if team == 'w':
+                    pieces_board = b_simulation.whites_in_board
+                    enemy_board = b_simulation.blacks_in_board
+                    king = b_simulation.w_king
+                    enemy = 'b'
+                else:
+                    pieces_board = b_simulation.blacks_in_board
+                    enemy_board = b_simulation.whites_in_board
+                    king = b_simulation.b_king
+                    enemy = 'w'
+                
+                if piece in pieces_board:                    
+                    if b_simulation.board_map[y][x] is not None:                        
+                        enemy_board.remove(b_simulation.board_map[y][x])
+                    idx = pieces_board.index(piece)
+                    pieces_board[idx].pos_alg = movement
+                    
+                    if piece.name[1] == 'k':
+                        king.pos_alg = movement
+                        
+                b_simulation.actual_board()
+                
+                                    
+                    
+                b_simulation.who_plays = enemy
+                #print('\n',king, piece,movement,'\n') 
+                #b_simulation.prt()
+                #print(king.pos_alg,b_simulation.possible_moves())                
+                if king.is_checked(b_simulation.possible_moves()) == False:
+                    
+                    valid_movements.append(movement)
+                    
+            valid_list.append([piece,valid_movements])
+        
+        return valid_list
     
     
     
@@ -215,40 +374,53 @@ class Board():
         None.
 
         '''
+        l_enemy_moves = []
         
-        
+        check_mate = False
         i = 0
-        
-        while  i < 200:
+        while not check_mate and i <200:
             
-            l1 = self.possible_moves()
-            l1 = self.move(l1)
-            
-            l2 = self.possible_moves()
+            l_possible_moves = self.possible_moves()
             
             if self.who_plays == 'w':
                 king = self.w_king
             else:
                 king = self.b_king
             
-            if king.is_checked(l1):
+            if king.is_checked(l_enemy_moves):
                 
-                l3 = self.simulate_check(l2)
-                
-                if is_empty(l3):
-                    print(f"Check mate at {king}")
-                    return
-                else:
-                    l3 = self.move(l3)
+                l_out = self.simulate_check(l_possible_moves\
+                                            , l_enemy_moves)
+                if is_empty(l_out):
+                    print(f"check mate {king}")
+                    #self.prt()
+                    #print(l_enemy_moves)
+                    check_mate = True
+                else:                    
+                    l_out = self.move(l_out)
+                    l_enemy_moves = l_out
             else:
-                l2 = self.move(l2)
                 
+                if is_empty(l_possible_moves):
+                    print(f"check mate {king}")
+                    check_mate = True
+                else:
+                    l_possible_moves = self.move(l_possible_moves)
+                    l_enemy_moves = l_possible_moves                    
             i += 1
-        
+        if check_mate:
+            self.prt()
+        else:
+            print('Draw - exceeded number of plays')
 
  
 if __name__ == "__main__":
     b = Board()
     b.game()
+    # b.prt()
+    # b_c = b
+    # b_c.w_king = k.king('bk','a3')
+    # print(b.w_king)
+    
     
 

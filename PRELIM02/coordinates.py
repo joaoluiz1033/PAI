@@ -93,7 +93,8 @@ def get_one_to_other(alg1,alg2):
     
 if __name__ == "__main__":
     
-    [x,y] = convert_to_coordinate('a6')       
+    [x,y] = convert_to_coordinate('a1')  
+    print(x,y)     
     pos = reconvert_to_alg([x,y])
     print(pos)
     

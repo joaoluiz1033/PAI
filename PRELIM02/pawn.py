@@ -6,24 +6,36 @@ Y_MAX = 7
 import pieces 
 import coordinates
 
-def pawn_moves(g_pos,add_x,add_y,l,board_map,team):
+def pawn_moves(g_pos,add_x,add_y,l,board_map,team): 
     '''
-    describes general movement 
-
+    Genereal move for pawn 
     Parameters
     ----------
-    g_pos : current coordinates x,y
-    add_x,y : aditions coordinates in x,y    
-    l : list with possible movements
-    board_map : board map with current pieces \
-        board_map[y][x] is the correct use 
-    team : pieces' team (black or white)
+    g_pos : TYPE
+        DESCRIPTION.
+    add_x : TYPE
+        DESCRIPTION.
+    add_y : TYPE
+        DESCRIPTION.
+    l : TYPE
+        DESCRIPTION.
+    board_map : TYPE
+        DESCRIPTION.
+    team : TYPE
+        DESCRIPTION.
 
     Returns
     -------
-    l : list with possible movements
+    None.
 
     '''
+# describes general movement 
+#g_pos == current coordinates x,y
+#add_x, add_y == aditions coordinates in x,y
+#l == list with possible movements
+#board_map == board map with current pieces \
+    #board_map[y][x] is the correct use 
+#team == pieces' team (black or white)
      
     x = g_pos[0]
     y = g_pos[1]
@@ -35,9 +47,11 @@ def pawn_moves(g_pos,add_x,add_y,l,board_map,team):
     
     if limits:
         if (board_map[y_new][x_new] == None) or \
-            (board_map[y_new][x_new][0] != team):
+            (board_map[y_new][x_new].team != team):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
-                l.append(possible_move)                
+                l.append(possible_move)
+                
+                
     
     return l
 
@@ -85,15 +99,15 @@ class pawn(pieces.pieces):
         return l
                    
     def two_square(self,board_map):
-    g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
-    x = g_pos[0]
-    y = g_pos[1]
-    l=[]
-    if self.team == 'w'  and y == 1 and board_map[x][y+1] is  None and board_map[x][y+2] is  None :
-        l.append(coordinates.reconvert_to_alg([x,y+2]))
-    elif self.team == 'b' and y == 6 and board_map[x][y-1] is  None and board_map[x][y-2] is  None :
-        l.append(coordinates.reconvert_to_alg([x,y-2]))
-    return l
+        g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
+        x = g_pos[0]
+        y = g_pos[1]
+        l=[]
+        if self.team == 'w'  and y == 1 and board_map[x][y+1] is  None and board_map[x][y+2] is  None :
+            l.append(coordinates.reconvert_to_alg([x,y+2]))
+        elif self.team == 'b' and y == 6 and board_map[x][y-1] is  None and board_map[x][y-2] is  None :
+            l.append(coordinates.reconvert_to_alg([x,y-2]))
+        return l
 
             
         
@@ -104,8 +118,7 @@ class pawn(pieces.pieces):
         g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
         x = g_pos[0]
         y = g_pos[1]
-        
-        
+                
         if self.team == 'w':
             if  y < Y_MAX:
                 y_new = y + 1   
@@ -116,6 +129,11 @@ class pawn(pieces.pieces):
                 
                 for diag in diagonal_moves:
                     l.append(diag)
+            if y == 1 :
+                y_new = y + 2
+                if board_map[y_new][x] is None:
+                    possible_move = coordinates.reconvert_to_alg([x,y_new])        
+                    l.append(possible_move)
         else:
             if y > Y_MIN:
                 y_new = y - 1 
@@ -126,9 +144,14 @@ class pawn(pieces.pieces):
                 
                 for diag in diagonal_moves:
                     l.append(diag)
-        
             
-        return l+(self.two_square(board_map))
+            if y == 6:
+                y_new = y - 2
+                if board_map[y_new][x] is None:
+                    possible_move = coordinates.reconvert_to_alg([x,y_new])        
+                    l.append(possible_move)
+            
+        return l
 
 if __name__ == "__main__":
     #p = pieces('wk','a1')
