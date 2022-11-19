@@ -110,10 +110,10 @@ class Board():
     
         self.history = [] #history of moves
         self.who_plays = 'w' # who is playing 
-        self.actual_board()  
+        self.current_board()  
         self.dead_pieces=[] #dead pieces
         
-    def actual_board(self): #put actual pieces in board 
+    def current_board(self): #put actual pieces in board 
         self.board_map = [ [ None for x in range(8) ] for y in range(8)]
         for pic in self.whites_in_board: #putting whites in board to display
             
@@ -167,6 +167,17 @@ class Board():
 
         return l_move_poss
     
+    def change_pawn(self, position ,pieces_in_board, pawn_idx,team):       
+        
+        
+        a = team
+        
+        pieces = [q.queen(a+'q', position),n.knight(a+'n',position),b.bishop(a+'b', position),r.rook(a+'r',position)]
+        p = random.choice(pieces)
+        
+        pieces_in_board[pawn_idx] = p
+        
+        return [p,p.check_moves(self.board_map)]
     
     def move(self,l_possible_moves):
         '''
@@ -205,6 +216,7 @@ class Board():
             valid = False
             while not valid:
                 l = random.choice(l_possible_moves)
+                idx_pawn = l_possible_moves.index(l)
                 piece = l[0]
                 if len(l[1]) > 0:
                     valid = True
@@ -232,12 +244,19 @@ class Board():
                     enemies_board.remove(self.board_map[y][x])
                     # print(f"{self.board_map[y][x]} eliminated at {movement}")
                 idx = pieces_board.index(piece)
-                pieces_board[idx].pos_alg = movement
-                
+                pieces_board[idx].pos_alg = movement                
                 if piece.name[1] == 'k':
                     king.pos_alg = movement    
-                
-            self.actual_board()
+                if piece.name[1] == 'p':
+                    if pieces_board[idx].at_max():
+                        
+                        new_l = self.change_pawn(movement,pieces_board,\
+                          idx,pieces_board[idx].team )                           
+                        l_possible_moves[idx_pawn] = new_l
+                       
+                    
+                    
+            self.current_board()
             
             if a:
                 return []
@@ -308,7 +327,7 @@ class Board():
                     #print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
                     king.pos_alg = movement    
                 
-            self.actual_board()
+            self.current_board()
             
             return l_possible_moves
 
@@ -347,7 +366,7 @@ class Board():
                     if piece.name[1] == 'k':
                         king.pos_alg = movement
                         
-                b_simulation.actual_board()
+                b_simulation.current_board()
                 
                                     
                     
@@ -378,7 +397,7 @@ class Board():
         
         check_mate = False
         i = 0
-        while not check_mate and i <200:
+        while not check_mate and i <1000:
             
             l_possible_moves = self.possible_moves()
             
@@ -409,15 +428,15 @@ class Board():
                     l_enemy_moves = l_possible_moves                    
             i += 1
         if check_mate:
-            self.prt()
+            return
         else:
             print('Draw - exceeded number of plays')
 
  
 if __name__ == "__main__":
-    b = Board()
-    b.game()
-    # b.prt()
+    bd = Board()
+    bd.game()
+    bd.prt()
     # b_c = b
     # b_c.w_king = k.king('bk','a3')
     # print(b.w_king)

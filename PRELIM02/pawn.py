@@ -110,6 +110,19 @@ class pawn(pieces.pieces):
         return l
 
             
+    def at_max(self):
+        cart_pos = coordinates.convert_to_coordinate(self.pos_alg)
+        y = cart_pos[1]
+        if self.team == 'w':
+            if y == Y_MAX:
+                return True
+        else:
+            if y == Y_MIN:
+                return True
+        return False 
+            
+            
+        
         
 
     def check_moves(self,board_map):
