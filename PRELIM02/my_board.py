@@ -181,8 +181,6 @@ class Board():
     
     def move(self,l_possible_moves):
         '''
-        
-
         Parameters
         ----------
         l_possible_moves : LIST
@@ -223,7 +221,7 @@ class Board():
                     
             movement = random.choice(l[1])
             # l_copy = copy.deepcopy(l_possible_moves)
-            l[1].remove(movement)
+            
             
             movement_xy = coordinates.convert_to_coordinate(movement)
             x = movement_xy [0]
@@ -234,19 +232,18 @@ class Board():
                 #print(f"{piece} to {movement}")                
                 if self.board_map[y][x] is not None:                    
                     if self.board_map[y][x].name[1] == 'k':
-                        return []
-                        # print(self.board_map[y][x].is_checked(l_copy))
-                        # print(f"{self.board_map[y][x]} eliminated at {movement}")
-                        # self.prt()
-                        # print(l_copy)
-                        # print(self.who_plays)
-                                                           
+                        return []                                                                                   
                     enemies_board.remove(self.board_map[y][x])
                     # print(f"{self.board_map[y][x]} eliminated at {movement}")
+                       
+                    
                 idx = pieces_board.index(piece)
-                pieces_board[idx].pos_alg = movement                
+                pieces_board[idx].pos_alg = movement  
+                l[1].remove(movement)
                 if piece.name[1] == 'k':
-                    king.pos_alg = movement    
+                    king.pos_alg = movement
+                
+                    
                 if piece.name[1] == 'p':
                     if pieces_board[idx].at_max():
                         
@@ -263,73 +260,7 @@ class Board():
             else:
                 return l_possible_moves
 
-    def move2(self,l_possible_moves):
-        '''
-        
     
-        Parameters
-        ----------
-        l_possible_moves : LIST
-            LIST OF POSSIBLE MOVES FOR THE PLAYER.
-    
-        Returns
-        -------
-        l_possible_moves : LIST
-            POSSIBLE MOVES MODIFIED (RECENT MOVE DELETED).
-    
-        '''
-        
-        l1 = []
-        
-        # print(self.who_plays,l_possible_moves)
-        if is_empty(l_possible_moves):
-            return l_possible_moves
-        else:
-            
-            if self.who_plays == 'w':
-                pieces_board = self.whites_in_board
-                enemies_board = self.blacks_in_board
-                king = self.w_king
-                self.who_plays = 'b'
-            else:
-                pieces_board = self.blacks_in_board
-                enemies_board = self.whites_in_board
-                king = self.b_king
-                self.who_plays = 'w'
-            
-            valid = False
-            while not valid:
-                l = random.choice(l_possible_moves)
-                piece = l[0]
-                if len(l[1]) > 0:
-                    valid = True
-                    
-            movement = random.choice(l[1])
-            
-            l[1].remove(movement)
-            
-            movement_xy = coordinates.convert_to_coordinate(movement)
-            x = movement_xy [0]
-            y = movement_xy [1]
-            
-            
-            if piece in pieces_board:
-                #print(f"{piece} to {movement}")                
-                if self.board_map[y][x] is not None:
-                    if self.board_map[y][x].name[1] == 'k':
-                        print(self.board_map[y][x])
-                        self.prt()                                       
-                    enemies_board.remove(self.board_map[y][x])
-                    print(f"{self.board_map[y][x]} eliminated at {movement}")
-                idx = pieces_board.index(piece)
-                pieces_board[idx].pos_alg = movement
-                if piece.name[1] == 'k':
-                    #print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-                    king.pos_alg = movement    
-                
-            self.current_board()
-            
-            return l_possible_moves
 
     
     def simulate_check(self,possible_moves,enemy_moves):      
@@ -393,6 +324,7 @@ class Board():
         None.
 
         '''
+        
         l_enemy_moves = []
         
         check_mate = False
@@ -400,7 +332,9 @@ class Board():
         while not check_mate and i <1000:
             
             l_possible_moves = self.possible_moves()
-            
+            l_possible_moves = self.simulate_check(l_possible_moves\
+                                        , l_enemy_moves)
+            #print(l_possible_moves)
             if self.who_plays == 'w':
                 king = self.w_king
             else:
@@ -415,7 +349,8 @@ class Board():
                     #self.prt()
                     #print(l_enemy_moves)
                     check_mate = True
-                else:                    
+                else:   
+                    
                     l_out = self.move(l_out)
                     l_enemy_moves = l_out
             else:
@@ -423,7 +358,8 @@ class Board():
                 if is_empty(l_possible_moves):
                     print(f"check mate {king}")
                     check_mate = True
-                else:
+                else:     
+                    
                     l_possible_moves = self.move(l_possible_moves)
                     l_enemy_moves = l_possible_moves                    
             i += 1
