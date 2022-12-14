@@ -63,6 +63,9 @@ class pawn(pieces.pieces):
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
+        self.en_passant_moves = []
+        
+              
         
     def diags_possible(self,board_map):
         diags=[]
@@ -163,6 +166,10 @@ class pawn(pieces.pieces):
                 if board_map[y_new][x] is None:
                     possible_move = coordinates.reconvert_to_alg([x,y_new])        
                     l.append(possible_move)
+                    
+        if len(self.en_passant_moves) > 0:
+            for possible_movement in self.en_passant_moves:
+                l.append(possible_movement)
             
         return l
 
