@@ -83,17 +83,11 @@ class king(pieces.pieces):
 
         '''
         
-        king_pos = self.pos_alg
-        
-        # l_king = self.check_moves(board_map)       
-              
+        king_pos = self.pos_alg        
+       
         for sublist in enemy_moves:
-            if king_pos in sublist[1]: #verifying if king is in check
-                #print(enemy_moves[i])
-                return True
-            # for movements in l_king:
-            #     if movements in sublist[1]: #verifying if king can escape
-            #         l_king.remove(movements) #removing this movement
+            if king_pos in sublist[1]: #verifying if king is in check                
+                return True         
         return False
         
 

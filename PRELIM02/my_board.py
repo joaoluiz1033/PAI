@@ -151,8 +151,6 @@ class Board():
         list of possible moves
 
         '''
-
-
         if self.who_plays == 'w':
             l_pieces = self.whites_in_board
             
@@ -232,7 +230,7 @@ class Board():
             POSSIBLE MOVES MODIFIED (RECENT MOVE DELETED).
 
         '''
-        a = False        
+        a = False   
         
         
         if is_empty(l_possible_moves):
@@ -267,23 +265,14 @@ class Board():
             x = movement_xy [0]
             y = movement_xy [1]
             
-            
-            #if piece.name[1] == 'p':
-                #self.en_passant(piece,enemies_board,movement_xy,inc)
-            
+                        
             if piece in pieces_board:
                 #print(f"{piece} to {movement}")                
                 if self.board_map[y][x] is not None:                    
                     if self.board_map[y][x].name[1] == 'k':
                         return []                                                                                   
                     enemies_board.remove(self.board_map[y][x])
-                    # print(f"{self.board_map[y][x]} eliminated at {movement}")
-
-               
-                    
-                    #if abs(p_x - x) != 0:
-                        #enemies_board.remove(self.board_map[y+inc][x])
-                       
+                   
                     
                 idx = pieces_board.index(piece)
                 pieces_board[idx].pos_alg = movement 
@@ -389,36 +378,29 @@ class Board():
         check_mate = False
         
         i = 0
-        while not check_mate and i <1000:
+        while not check_mate and i <1000:            
+            l_possible_moves = self.possible_moves()            
             
-            l_possible_moves = self.possible_moves()
-            
-            l_possible_moves = self.simulate_check(l_possible_moves\
-                                        , l_enemy_moves)
-            #print(l_possible_moves)
             if self.who_plays == 'w':
                 king = self.w_king
             else:
                 king = self.b_king         
                 
             
-            if king.is_checked(l_enemy_moves):
-                
+            if king.is_checked(l_enemy_moves):                
                 l_out = self.simulate_check(l_possible_moves\
                                             , l_enemy_moves)
                 if is_empty(l_out):
                     print(f"check mate {king}")                    
-                    #self.prt()
-                    #print(l_enemy_moves)
                     check_mate = True
-                else: 
-                    
+                else:                     
                     l_out = self.move(l_out)
                     l_enemy_moves = l_out
-            else:                
-                if is_empty(l_possible_moves):
+            else:               
+                if is_empty(l_possible_moves):                    
                     print(f"Draw {king} cannot move")
                     check_mate = True
+                    
                 else:     
                     
                     l_possible_moves = self.move(l_possible_moves)
@@ -434,9 +416,7 @@ if __name__ == "__main__":
     bd = Board()
     bd.game()
     bd.prt()
-    # b_c = b
-    # b_c.w_king = k.king('bk','a3')
-    # print(b.w_king)
+  
     
     
 
