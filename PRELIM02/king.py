@@ -110,6 +110,6 @@ class king(pieces.pieces):
     
 if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
-    k1 = king('wp','d5')
+    k1 = king('wp','f6')
     l = k1.check_moves(board_map)
-    print(len(k1))
+    print(l)

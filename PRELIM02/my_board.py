@@ -327,7 +327,6 @@ class Board():
         return valid_list
     
            
-        
     
     def game(self):
         '''
@@ -353,26 +352,30 @@ class Board():
                 king = self.b_king         
                    
             if king.is_checked(l_enemy_moves):                
-                l_out = self.simulate_check(l_possible_moves)                
-                if is_empty(l_out):
+                l_out = self.simulate_check(l_possible_moves)
+                                
+                if is_empty(l_out):                   
                     print(f"check mate {king}")                    
                     check_mate = True
                 else:                     
                     l_out = self.move(l_out)
                     l_enemy_moves = l_out
-            else:               
+            else:
+                l_out = self.simulate_check(l_possible_moves)
+                
                 if is_empty(l_possible_moves):                      
                     print(f"Draw {king} cannot move")
                     check_mate = True                    
                 else:                      
                     l_out = self.move(l_possible_moves)
                     l_enemy_moves = l_out                   
+            self.prt()
             i += 1
             
        
         if check_mate:            
             return
-        else:
+        else:            
             print('Draw - exceeded number of plays')
     
     
