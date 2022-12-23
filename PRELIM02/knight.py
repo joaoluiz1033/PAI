@@ -63,6 +63,6 @@ class knight(pieces.pieces):
     
 if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
-    n1 = knight('wp','b1')
+    n1 = knight('wp','d3')
     l = n1.check_moves(board_map)
-    print(len(n1))
+    print(l)

@@ -70,6 +70,6 @@ class queen(pieces.pieces):
     
 if __name__ == "__main__":
     board_map = [ [ None for x in range(8) ] for y in range(8)]
-    q1 = queen('wp','d1')
+    q1 = queen('wp','c7')
     l = q1.check_moves(board_map)
     print(l)
