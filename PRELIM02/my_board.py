@@ -260,7 +260,8 @@ class Board():
                    
                     
                 idx = pieces_board.index(piece)
-                pieces_board[idx].pos_alg = movement 
+                pieces_board[idx].pos_alg = movement
+                piece.hist.append(movement)
                 l[1].remove(movement)
                 if piece.name[1] == 'k':
                     king.pos_alg = movement                
@@ -270,7 +271,7 @@ class Board():
                         new_l = self.change_pawn(movement,pieces_board,\
                           idx,pieces_board[idx].team )                           
                         l_possible_moves[idx_pawn] = new_l     
-                    
+                        
                     
             self.current_board()
             
@@ -343,18 +344,16 @@ class Board():
         check_mate = False
         
         i = 0
-        while not check_mate and i <500:            
-            l_possible_moves_1 = self.possible_moves()            
-            l_possible_moves = self.simulate_check(l_possible_moves_1)
-                                      
+        while not check_mate and i <1000:                  
+            l_possible_moves = self.possible_moves()          
+                                                  
             if self.who_plays == 'w':
                 king = self.w_king
             else:
                 king = self.b_king         
-                
-            
+                   
             if king.is_checked(l_enemy_moves):                
-                l_out = l_possible_moves                
+                l_out = self.simulate_check(l_possible_moves)                
                 if is_empty(l_out):
                     print(f"check mate {king}")                    
                     check_mate = True
@@ -362,15 +361,12 @@ class Board():
                     l_out = self.move(l_out)
                     l_enemy_moves = l_out
             else:               
-                if is_empty(l_possible_moves):                     
+                if is_empty(l_possible_moves):                      
                     print(f"Draw {king} cannot move")
-                    print(l_possible_moves_1)
-                    print(l_possible_moves)
-                    check_mate = True
-                    
+                    check_mate = True                    
                 else:                      
-                    l_possible_moves = self.move(l_possible_moves)
-                    l_enemy_moves = l_possible_moves                    
+                    l_out = self.move(l_possible_moves)
+                    l_enemy_moves = l_out                   
             i += 1
             
        
