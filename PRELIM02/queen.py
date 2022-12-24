@@ -25,10 +25,8 @@ def queen_moves(g_pos,add_x,add_y,l,board_map,team):
     while limits and (not found):      
 
         if (board_map[y_new][x_new] is None):
-
             possible_move = coordinates.reconvert_to_alg([x_new,y_new])        
             l.append(possible_move)
-
         else:
             if (board_map[y_new][x_new].team != team):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])        

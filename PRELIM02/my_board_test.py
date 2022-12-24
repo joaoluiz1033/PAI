@@ -3,8 +3,6 @@ import random
 import datetime 
 import os 
 import copy
-import pdb
-
 
 import pieces as pcs
 import pawn as p
@@ -102,7 +100,7 @@ class Board():
         self.who_plays = 'w' # who is playing 
         self.current_board()  
         self.dead_pieces=[] #dead pieces
-        self.lat_mov = 'None'
+        
     def current_board(self): #put actual pieces in board 
         self.board_map = [ [ None for x in range(8) ] for y in range(8)]
         for pic in self.whites_in_board: #putting whites in board to display
@@ -205,12 +203,7 @@ class Board():
                                coordinates.reconvert_to_alg([x,y+inc]))
             
         return 
-    def change_who_plays(self):
-        if self.who_plays == 'w':
-            self.who_plays = 'b'
-        else:
-            self.who_plays = 'w'
-        return
+    
     def move(self,l_possible_moves):
         '''
         Parameters
@@ -234,14 +227,17 @@ class Board():
                 pieces_board = self.whites_in_board
                 enemies_board = self.blacks_in_board
                 king = self.w_king
-                
+                self.who_plays = 'b'
                 
                 
             else:
                 pieces_board = self.blacks_in_board
                 enemies_board = self.whites_in_board
                 king = self.b_king
+                self.who_plays = 'w'
                 
+                
+            
             valid = False
             while not valid:
                 l = random.choice(l_possible_moves)
@@ -255,7 +251,7 @@ class Board():
             x = movement_xy [0]
             y = movement_xy [1]
             
-            #print(f"{piece} to {movement}")            
+                        
             if piece in pieces_board:                                
                 if self.board_map[y][x] is not None:                    
                     if self.board_map[y][x].name[1] == 'k':
@@ -265,8 +261,7 @@ class Board():
                     
                 idx = pieces_board.index(piece)
                 pieces_board[idx].pos_alg = movement
-                piece.history_mov.append(movement)
-                self.last_movement = movement
+                
                 l[1].remove(movement)
                 if piece.name[1] == 'k':
                     king.pos_alg = movement                
@@ -279,8 +274,6 @@ class Board():
                         
                     
             self.current_board()
-            l_possible_moves = self.possible_moves()
-            
             
             if a:
                 return []
@@ -306,7 +299,9 @@ class Board():
         x = movement_xy [0]
         y = movement_xy [1]               
         if piece in pieces_board:                                
-            if self.board_map[y][x] is not None:                                                                                            
+            if self.board_map[y][x] is not None:                    
+                if self.board_map[y][x].name[1] == 'k':
+                    return []                                                                                   
                 enemies_board.remove(self.board_map[y][x])
             idx = pieces_board.index(piece)
             pieces_board[idx].pos_alg = movement
@@ -317,12 +312,13 @@ class Board():
         
         return
     
-    def simulate_check(self,l_possible_moves):     
+    def simulate_check(self,possible_moves):     
         
-        valid_list = []       
+        valid_list = []
+        
         
             
-        for pair in l_possible_moves:
+        for pair in possible_moves:
             piece = pair[0]
             piece_movements = pair[1]
             piece_valid_movements = []
@@ -349,37 +345,38 @@ class Board():
         Returns
         -------
         None.
+
         '''        
         l_enemy_moves = []
-        
-        
         
         end_game = False
         
         i = 0
-        while not end_game and i <1000: 
-
+        while not end_game and i <1000:                  
+            l_possible_moves = self.possible_moves()   
+            #print(l_possible_moves)
+            l_valid_moves = self.simulate_check(l_possible_moves)                                      
+            #print(l_valid_moves)
+            #self.prt()
             if self.who_plays == 'w':
                 king = self.w_king
             else:
-                king = self.b_king  
-                 
-            l_possible_moves = self.possible_moves()   
-            
-            l_valid_moves = self.simulate_check(l_possible_moves)
+                king = self.b_king         
                    
-            if is_empty(l_valid_moves):
-                if king.is_checked(l_enemy_moves):
-                    print(f"Check Mate: {king}")
-                else:                    
-                    print(f"{self.who_plays} cannot move")
-                    
-                end_game = True
+            if king.is_checked(l_enemy_moves):
+                print(f"{king}")
+                self.prt()
+                if is_empty(l_valid_moves):                    
+                    print(f"check mate at {king}")
+                    end_game = True
+                else:
+                    l_enemy_moves = self.move(l_valid_moves)                
             else:
-                l_enemy_moves = self.move(l_valid_moves)
-                l_enemy_moves = self.simulate_check(l_enemy_moves)
-                self.change_who_plays()
-            
+                if is_empty(l_valid_moves):
+                    print(f"{king} cannot move")
+                    end_game = True
+                else:
+                    l_enemy_moves = self.move(l_valid_moves)
             i += 1
             
        
@@ -387,7 +384,62 @@ class Board():
             return
         else:            
             print('Maximum iteration number')
+    def choose_move(self,l_valid_moves):
+        for x in l_valid_moves:
+            print(x)
+        a = input("Choose a movement: ")
+        p_name = a[0:2]
+        p_pos = a[2:4]
+        p_go = a[4:6]
         
+        for x in l_valid_moves:
+            if x[0].name == p_name:
+                if x[0].pos_alg == p_pos:
+                    piece = x[0]
+                    movement = p_go
+                    
+        return [piece, movement]
+    def game2(self):
+        '''
+        Simulation of a game 
+
+        Returns
+        -------
+        None.
+
+        '''        
+        l_enemy_moves = []
+        
+        end_game = False
+        
+        i = 0
+        while not end_game and i <1000:  
+            self.prt()                
+            l_possible_moves = self.possible_moves()          
+            l_valid_moves = self.simulate_check(l_possible_moves)                                      
+            
+            if self.who_plays == 'w':
+                king = self.w_king
+            else:
+                king = self.b_king         
+                   
+            if is_empty(l_valid_moves):
+                if king.is_checked(l_enemy_moves):                    
+                    print(f"check mate at {king}")
+                else:
+                    print(f"{king} cannot move")
+                end_game = True
+            else:
+                [piece,movement] = self.choose_move(l_valid_moves)
+                self.move_piece(piece,movement)
+            i += 1
+            
+       
+        if end_game:            
+            return
+        else:            
+            print('Maximum iteration number')
+    
                        
 if __name__ == "__main__":
     bd = Board()    

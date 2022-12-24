@@ -85,7 +85,7 @@ class king(pieces.pieces):
         
         king_pos = self.pos_alg        
        
-        for sublist in enemy_moves:
+        for sublist in enemy_moves:            
             if king_pos in sublist[1]: #verifying if king is in check                
                 return True         
         return False
