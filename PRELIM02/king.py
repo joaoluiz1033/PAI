@@ -2,6 +2,7 @@ X_MIN = 0
 Y_MIN = 0
 X_MAX = 7
 Y_MAX = 7
+import pdb
 
 import pieces 
 import coordinates
@@ -40,6 +41,37 @@ class king(pieces.pieces):
         super().__init__(name,pos)
         self.team = name[0]
     
+    def can_reach(self,board_map,y,x,x_target,add):
+        x += add
+        while(x != x_target):
+            if board_map[y][x] is not None:
+                return False
+            x += add
+        return True
+    
+    def roque(self,board_map):
+        
+        l_possible_roque = []
+        
+        if len(self.history_mov) == 0:
+            
+            g_pos = coordinates.convert_to_coordinate(self.pos_alg)
+            x = g_pos[0]
+            y = g_pos[1]
+            
+            if board_map[y][X_MAX] is not None:
+                if len(board_map[y][X_MAX].history_mov) == 0:
+                    if self.can_reach(board_map,y,x,X_MAX,1):
+                        g_roque = coordinates.reconvert_to_alg([x+2,y])
+                        l_possible_roque.append(g_roque)
+            if board_map[y][X_MIN] is not None:
+                if len(board_map[y][X_MIN].history_mov) == 0:
+                    if self.can_reach(board_map,y,x,X_MIN,-1):
+                        g_roque = coordinates.reconvert_to_alg([x-2,y])
+                        l_possible_roque.append(g_roque)
+                
+        return l_possible_roque
+    
     def check_moves(self,board_map):
         l = []
         g_pos = coordinates.convert_to_coordinate(self.pos_alg)
@@ -53,7 +85,10 @@ class king(pieces.pieces):
         l = king_moves(g_pos,-1,0,l,board_map,self.team)
         l = king_moves(g_pos,-1,1,l,board_map,self.team)
             
-
+        l_roque = self.roque(board_map)
+        
+        for move_roque in l_roque:
+            l.append(move_roque)        
         return l
         
      
@@ -103,9 +138,8 @@ class king(pieces.pieces):
                 
         return l
         
-    def stalemate(self,moves):
-        return moves == []
-
+    
+    
             
     
 if __name__ == "__main__":

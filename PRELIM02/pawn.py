@@ -3,6 +3,8 @@ Y_MIN = 0
 X_MAX = 7
 Y_MAX = 7
 
+import pdb
+
 import pieces 
 import coordinates
 
@@ -63,7 +65,7 @@ class pawn(pieces.pieces):
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
-        self.en_passant_moves = []
+        self.en_passante_moves = []
         
               
         
@@ -167,9 +169,25 @@ class pawn(pieces.pieces):
                     possible_move = coordinates.reconvert_to_alg([x,y_new])        
                     l.append(possible_move)
                     
-        if len(self.en_passant_moves) > 0:
-            for possible_movement in self.en_passant_moves:
-                l.append(possible_movement)
+        if len(self.en_passante_moves) > 0:
+            
+            if self.team == 'w':
+                add = 1
+            else:
+                add = -1
+            
+            for possible_movement in self.en_passante_moves:
+                geom_pos = coordinates.convert_to_coordinate(\
+                 possible_movement)
+                x = geom_pos[0]
+                y = geom_pos[1]
+                if board_map[y-add][x] is not None:
+                    
+                    if board_map[y-add][x].name[1] == 'p' and \
+                        board_map[y-add][x].name[0] != self.team:
+                            l.append(possible_movement)
+                else:
+                    self.en_passante_moves.remove(possible_movement)
             
         return l
 

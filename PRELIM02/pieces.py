@@ -9,8 +9,7 @@ class pieces():
     def __init__(self,name,pos):
         self.name = name        
         self.pos_alg = pos
-        self.history_mov = []
-        
+        self.history_mov = []        
         
     def __repr__(self):
         return f"{self.name} at {self.pos_alg}"
