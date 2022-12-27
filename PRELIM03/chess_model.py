@@ -225,14 +225,11 @@ class Board():
             self.who_plays = 'w'
         return
     
-    def move_choose(self,l_possible_moves):
-        
-        a = False         
-        
+    def move_choose(self,l_possible_moves):        
+        a = False       
         if is_empty(l_possible_moves):
             return l_possible_moves
-        else:
-            
+        else:            
             if self.who_plays == 'w':
                 pieces_board = self.whites_in_board
                 enemies_board = self.blacks_in_board
@@ -242,8 +239,7 @@ class Board():
                 pieces_board = self.blacks_in_board
                 enemies_board = self.whites_in_board
                 king = self.b_king
-                add = -1
-                
+                add = -1                
             valid = False
             while not valid:
                 i = 0
@@ -255,30 +251,24 @@ class Board():
                 idx_pawn = l_possible_moves[l]
                 piece = l_possible_moves[l][0]
                 if len(l_possible_moves[l][1]) > 0:
-                    valid = True
-            
+                    valid = True            
             for s in l_possible_moves[l][1]:
-                print(s)
-                  
+                print(s)                  
             movement = input('Choose a movement: ')      
             movement_xy = coordinates.convert_to_coordinate(movement)
             x = movement_xy [0]
-            y = movement_xy [1]
-            
+            y = movement_xy [1]            
             old_xy = coordinates.convert_to_coordinate(piece.pos_alg)
             old_y = old_xy[1]
-            old_x = old_xy[0]
-                        
-            if piece in pieces_board: 
-                              
+            old_x = old_xy[0]                        
+            if piece in pieces_board:                               
                 if self.board_map[y][x] is not None:                    
                     if self.board_map[y][x].name[1] == 'k':
                         return [] 
                     try:
                         enemies_board.remove(self.board_map[y][x])
                     except:
-                        pdb.set_trace()
-                    
+                        pdb.set_trace()                    
                 else:
                     if piece.name[1] == 'p':
                         if abs(old_x - x) != 0:                            
@@ -292,29 +282,22 @@ class Board():
                             idx_rook = self.find_rook(pieces_board, -1) 
                             rook_pos = coordinates.reconvert_to_alg([x+1,y])
                             pieces_board[idx_rook].pos_alg = rook_pos
-                            
                 idx = pieces_board.index(piece)
                 pieces_board[idx].pos_alg = movement
-                piece.history_mov.append(movement)
-                
+                piece.history_mov.append(movement)                
                 self.last_movement = movement
                 l_possible_moves[l][1].remove(movement)
                 if piece.name[1] == 'k':
-                    king.pos_alg = movement                
-                
+                    king.pos_alg = movement          
                 if piece.name[1] == 'p':                   
                     if pieces_board[idx].at_max():                        
                         new_l = self.change_pawn(movement,pieces_board,\
                           idx,pieces_board[idx].team )                           
-                        l_possible_moves[idx_pawn] = new_l     
-                    
+                        l_possible_moves[idx_pawn] = new_l                  
                     elif abs(old_y - y) == 2:                        
                         self.register_en_passant(x,y,piece,add,enemies_board)
-                    
             self.current_board()
-            l_possible_moves = self.possible_moves()
-            
-            
+            l_possible_moves = self.possible_moves()           
             if a:
                 return []
             else:
@@ -433,8 +416,7 @@ class Board():
 
     
     
-    def move_piece(self, piece, movement):
-        
+    def move_piece(self, piece, movement):        
         if self.who_plays == 'w':
             pieces_board = self.whites_in_board
             enemies_board = self.blacks_in_board
@@ -561,7 +543,79 @@ class Board():
         l_possible_moves = self.possible_moves()            
         l_valid_moves = self.simulate_check(l_possible_moves)
         return l_valid_moves
-        
+    
+    def move_piece_view(self,l_possible_moves,p_number,m_mov):
+        a = False       
+        if is_empty(l_possible_moves):
+            return l_possible_moves
+        else:            
+            if self.who_plays == 'w':
+                pieces_board = self.whites_in_board
+                enemies_board = self.blacks_in_board
+                king = self.w_king
+                add = 1
+            else:
+                pieces_board = self.blacks_in_board
+                enemies_board = self.whites_in_board
+                king = self.b_king
+                add = -1                
+            valid = False
+            while not valid:
+                l = p_number   
+                l = int(l)
+                idx_pawn = l_possible_moves[l]
+                piece = l_possible_moves[l][0]
+                if len(l_possible_moves[l][1]) > 0:
+                    valid = True            
+                            
+            movement = m_mov     
+            movement_xy = coordinates.convert_to_coordinate(movement)
+            x = movement_xy [0]
+            y = movement_xy [1]            
+            old_xy = coordinates.convert_to_coordinate(piece.pos_alg)
+            old_y = old_xy[1]
+            old_x = old_xy[0]                        
+            if piece in pieces_board:                               
+                if self.board_map[y][x] is not None:                    
+                    if self.board_map[y][x].name[1] == 'k':
+                        return [] 
+                    try:
+                        enemies_board.remove(self.board_map[y][x])
+                    except:
+                        pdb.set_trace()                    
+                else:
+                    if piece.name[1] == 'p':
+                        if abs(old_x - x) != 0:                            
+                            enemies_board.remove(self.board_map[y-add][x]) 
+                    elif  piece.name[1] == 'k' and abs(x - old_x) == 2:
+                        if x > old_x:
+                            idx_rook = self.find_rook(pieces_board, 1)
+                            rook_pos = coordinates.reconvert_to_alg([x-1,y])
+                            pieces_board[idx_rook].pos_alg = rook_pos
+                        else:
+                            idx_rook = self.find_rook(pieces_board, -1) 
+                            rook_pos = coordinates.reconvert_to_alg([x+1,y])
+                            pieces_board[idx_rook].pos_alg = rook_pos
+                idx = pieces_board.index(piece)
+                pieces_board[idx].pos_alg = movement
+                piece.history_mov.append(movement)                
+                self.last_movement = movement
+                l_possible_moves[l][1].remove(movement)
+                if piece.name[1] == 'k':
+                    king.pos_alg = movement          
+                if piece.name[1] == 'p':                   
+                    if pieces_board[idx].at_max():                        
+                        new_l = self.change_pawn(movement,pieces_board,\
+                          idx,pieces_board[idx].team )                           
+                        l_possible_moves[idx_pawn] = new_l                  
+                    elif abs(old_y - y) == 2:                        
+                        self.register_en_passant(x,y,piece,add,enemies_board)
+            self.current_board()
+            l_possible_moves = self.possible_moves()           
+            if a:
+                return []
+            else:
+                return l_possible_moves
             
                        
 if __name__ == "__main__":
