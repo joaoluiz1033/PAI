@@ -560,13 +560,15 @@ class Board():
                 king = self.b_king
                 add = -1                
             valid = False
-            while not valid:
+            while not valid:                
                 l = p_number   
                 l = int(l)
                 idx_pawn = l_possible_moves[l]
                 piece = l_possible_moves[l][0]
                 if len(l_possible_moves[l][1]) > 0:
-                    valid = True            
+                    valid = True
+                if valid == False:
+                    return
                             
             movement = m_mov     
             movement_xy = coordinates.convert_to_coordinate(movement)
