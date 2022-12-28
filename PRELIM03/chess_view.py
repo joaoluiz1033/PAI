@@ -39,6 +39,7 @@ class Map_board(QWidget):
         self.bshow_moves = QPushButton("Show Possible Moves")
         self.bshow_moves.clicked.connect(self.show_moves)    
         self.text_box = QTextEdit()
+        self.text_box.setFontPointSize(9);
         layout = QVBoxLayout()  
         layout.addWidget(self.button_map) 
         layout.addWidget(self.bshow_moves)

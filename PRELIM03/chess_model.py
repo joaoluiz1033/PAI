@@ -133,15 +133,16 @@ class Board():
     
     def prt_silenced(self): # print board 
         s = []
+        s.append('\t')
         for x in range(8):
             l = self.board_map[7-x]
             for y in l:                
                 if y == None:
-                    s.append('.     ')
+                    s.append('.  ')
                 else:
                     s.append(y.name+' ')                
-            s.append(" \n ")
-        s = ' '.join(s)
+            s.append("\n\t")
+        s = ''.join(s)
         return s
     
     def possible_moves(self):
@@ -526,7 +527,8 @@ class Board():
         end_game = False        
         i = 0
         while not end_game and i <1000: 
-            self.prt()
+            s = self.prt_silenced()
+            print(s)
             if self.who_plays == 'w':
                 king = self.w_king
             else:
