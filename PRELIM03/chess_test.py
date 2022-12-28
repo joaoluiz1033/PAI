@@ -1,57 +1,34 @@
+from PyQt5.QtWidgets import QApplication,QWidget,QTextEdit,QVBoxLayout,QPushButton
 import sys
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+class TextEditDemo(QWidget):
+        def __init__(self,parent=None):
+                super().__init__(parent)
 
-from chess_control import Controler
+                self.setWindowTitle("QTextEdit")
+                self.resize(300,270)
 
+                self.textEdit = QTextEdit()
+                self.btnPress1 = QPushButton("Button 1")
+                self.btnPress2 = QPushButton("Button 2")
 
-class Map():
-    
-    def __init__(self):
-        pass
+                layout = QVBoxLayout()
+                layout.addWidget(self.textEdit)
+                layout.addWidget(self.btnPress1)
+                layout.addWidget(self.btnPress2)
+                self.setLayout(layout)
 
-class Map_board(QWidget):
-    
-    def __init__(self, parent,controler):
-        super().__init__(parent)
-        self.controler = controler
-        self.controler.addClient(self)        
-        self.setFixedWidth(300)
-        layout = QVBoxLayout()
-        
-    def print_map(self):
-        self.controler()
-        
-        
-class MainWidget(QWidget):
-    
-    def __init__(self, parent,controler):
-        super().__init__(parent)
-        self.setMinimumSize(640, 480)
-        vlayout = QVBoxLayout()
-        hlayout = QHBoxLayout()
-        self.map = Map_board(self,controler)
-        hlayout.addWidget(self.map, 0)
-        vlayout.addLayout(hlayout, 1)
-        self.setLayout(vlayout)
-           
-    
-class MainWindow(QMainWindow):
-    
-    def __init__(self,controler):
-        super().__init__()
-        self.setWindowTitle("Xadrez")
-        self.mainwidget = MainWidget(self,controler)
+                self.btnPress1.clicked.connect(self.btnPress1_Clicked)
+                self.btnPress2.clicked.connect(self.btnPress2_Clicked)
 
-def main():
-    app = QApplication([])
-    controler = Controler()
-    win = MainWindow(controler)    
-    win.show()
-    app.exec()
-    
-    
+        def btnPress1_Clicked(self):
+                self.textEdit.setPlainText("Hello PyQt5!\nfrom pythonpyqt.com")
+
+        def btnPress2_Clicked(self):
+                self.textEdit.setHtml("<font color='red' size='6'><red>Hello PyQt5!\nHello</font>")
+
 if __name__ == '__main__':
-    main()
+        app = QApplication(sys.argv)
+        win = TextEditDemo()
+        win.show()
+        sys.exit(app.exec_())

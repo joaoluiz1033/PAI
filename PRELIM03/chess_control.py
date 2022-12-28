@@ -32,8 +32,8 @@ class Controler(ControlerBase):
         return l_valid_moves
     
     def give_map_board(self):
-        self.board.prt()
-        return
+        s = self.board.prt_silenced()
+        return s
     
     def give_who_plays(self):
         pl = self.board.who_plays()
@@ -54,6 +54,12 @@ class Controler(ControlerBase):
             print(f"Check Mate: {ch.king}")
         else:                    
             print(f"{self.who_plays} cannot move")
+            
+    def give_who_plays(self):
+        if self.board.who_plays == 'w':
+            return 'w'
+        else:
+            return 'b'
         
     def send_U_move(self, piece, movement,l_possible_moves):
         l_enemy_moves = self.board.move_piece_view(l_possible_moves,piece,movement)

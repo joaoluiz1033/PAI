@@ -4,7 +4,7 @@ import datetime
 import os 
 import copy
 import pdb
-
+import string
 
 import pieces as pcs
 import pawn as p
@@ -130,6 +130,19 @@ class Board():
                     print(y.name+' ',end='')                
             print('\n')
         return 
+    
+    def prt_silenced(self): # print board 
+        s = []
+        for x in range(8):
+            l = self.board_map[7-x]
+            for y in l:                
+                if y == None:
+                    s.append('.     ')
+                else:
+                    s.append(y.name+' ')                
+            s.append(" \n ")
+        s = ' '.join(s)
+        return s
     
     def possible_moves(self):
         '''
