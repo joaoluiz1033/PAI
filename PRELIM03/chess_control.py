@@ -11,8 +11,7 @@ class ControlerBase():
     def addClient(self,client):
         self.clients.append(client)
         
-    def refreshAll(self,message):
-        self.message = message
+    def refreshAll(self):
         for client in self.clients:
             client.refresh()
 
@@ -39,16 +38,11 @@ class Controler(ControlerBase):
         self.board.prt()
         return 
     
-    def give_who_plays(self):
-        pl = self.board.who_plays()
-        return pl
+    def give_who_plays(self): 
+        return self.board.who_plays()
     
     def give_game_state(self,l_valid_moves):
-        end_game = False
-        if self.board.who_plays == 'w':
-            king = self.board.w_king
-        else:
-            king = self.board.b_king
+        end_game = False        
         if ch.is_empty(l_valid_moves):                                
             end_game = True
         return end_game
@@ -61,14 +55,15 @@ class Controler(ControlerBase):
             
     def give_who_plays(self):
         if self.board.who_plays == 'w':
-            return 'w'
+            return self.board.w_king
         else:
-            return 'b'
+            return self.board.b_king
         
     def send_U_move(self, piece, movement,l_possible_moves):
         l_enemy_moves = self.board.move_piece_view(l_possible_moves,piece,movement)
         l_enemy_moves = self.board.simulate_check(l_enemy_moves)
-        self.board.change_who_plays()        
+        self.board.change_who_plays()
+        self.refreshAll()        
         return l_enemy_moves
     
     def send_IA_move(self,l_possible_moves):

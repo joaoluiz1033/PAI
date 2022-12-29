@@ -34,6 +34,14 @@ def add_piece(y):
     elif y == "bk":
         return QPixmap("./images/bk.png")
     
+def moves_to_string(l_valid_moves):
+    i = 0
+    s = ''
+    for x in l_valid_moves:
+        s = s + str(i) + " -> " + str(x[0]) +":" + str(x[1])+'\n'
+        i += 1
+    return s
+    
 if __name__ == "__main__":
     y ='wp'
     p = add_piece(y)

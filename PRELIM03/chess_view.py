@@ -13,8 +13,9 @@ from chess_control import Controler
 class ChessMovement(QWidget):
     
     def __init__(self, parent, controler):
-        super().__init__(parent)
+        super().__init__(parent)        
         self.controler = controler
+        self.controler.addClient(self)
         self.valid_movements = []
         self.enemy_moves = []
         self.movementUI()
@@ -29,6 +30,8 @@ class ChessMovement(QWidget):
         self.valid_moves = QTextEdit()
         move_button = QPushButton("Move")
         move_button.clicked.connect(self.User_move)
+        self.bshow_moves = QPushButton("Show Possible Moves")
+        self.bshow_moves.clicked.connect(self.show_moves)
         layout.addWidget(piece_label)
         layout.addWidget(self.piece)
         layout.addWidget(movement_label)        
@@ -36,19 +39,33 @@ class ChessMovement(QWidget):
         layout.addWidget(move_button)
         layout.addWidget(valid_moves_label)
         layout.addWidget(self.valid_moves)
+        layout.addWidget(self.bshow_moves)
         self.setLayout(layout)
         
     def User_move(self):
         piece = self.piece.text()
         movement = self.movement.text()
         self.enemy_moves = self.controler.send_U_move(piece,\
-                              movement, self.valid_moves)
+                              movement, self.valid_movements)
+            
+    def refresh(self):
+        king = self.controler.give_who_plays()
+        if self.controler.give_game_state(self,l_valid_moves):
+            pass
+        else:
+            self.controler.give_final_result(self,l_enemy_moves,king)
+    
+    def show_moves(self):
+        self.valid_movements = self.controler.give_valid_moves()
+        self.valid_moves.setPlainText(\
+                          inter_fun.moves_to_string(self.valid_movements))
 
 class ChessBoard(QWidget):
     
     def __init__(self, parent, controler):
-        super().__init__(parent)
+        super().__init__(parent)        
         self.controler = controler 
+        self.controler.addClient(self)
         self.layout = QGridLayout()  
         self.board()        
         self.board_pieces = ChessPieces(self,controler,self.layout)        
@@ -70,11 +87,16 @@ class ChessBoard(QWidget):
                     self.layout.addWidget(square, i, j)
         self.setLayout(self.layout)
          
-
+    def refresh(self):
+        self.board_pieces = ChessPieces(self,controler,self.layout)
+ 
+        
 class ChessPieces(QWidget):
+    
     def __init__(self, parent, controler,layout):
         super().__init__(parent)
         self.controler = controler
+        self.controler.addClient(self)
         self.layout = layout
         self.pieces()
         
@@ -91,8 +113,9 @@ class ChessPieces(QWidget):
                     piece.setPixmap(piece_type.scaled(50, 50))                  
                     self.layout.addWidget(piece, x, j)
                 j += 1
-        #self.setLayout(self.layout)
-    
+        
+    def refresh(self):
+        self.pieces()
     
 class chessUI(QWidget):
 
@@ -119,12 +142,20 @@ class MainWindow(QMainWindow):
         status_bar.showMessage('Xadrez version 1.0')
         self.mainwidget = chessUI(self, controler)
         self.setCentralWidget(self.mainwidget)
+        self.setWindowFlags(
+        Qt.Window |
+        Qt.CustomizeWindowHint |
+        Qt.WindowTitleHint |
+        Qt.WindowCloseButtonHint |
+        Qt.WindowStaysOnTopHint
+        )
 
 
 def main():
     app = QApplication([])
     controler = Controler()
-    win = MainWindow(controler)   
+    win = MainWindow(controler) 
+    
     controler.__init__()
     win.show()
     app.exec()
