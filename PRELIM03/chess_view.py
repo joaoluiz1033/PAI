@@ -4,48 +4,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+import interface_function as inter_fun
+
 from chess_control import Controler
-
-
-# wp = QPixmap("./images/wp.png")
-# wn = QPixmap("./images/wn.png")
-# wb = QPixmap("./images/wb.png")
-# wr = QPixmap("./images/wr.png")
-# wq = QPixmap("./images/wq.png")
-# wk = QPixmap("./images/wk.png")
-# bp = QPixmap("./images/bp.png")
-# bn = QPixmap("./images/bn.png")
-# bb = QPixmap("./images/bb.png")
-# br = QPixmap("./images/br.png")
-# bq = QPixmap("./images/bq.png")
-# bk = QPixmap("./images/bk.png")
-
-
-def add_piece(y):
-    if y == "wp":
-        pass
-    elif y == "wn":
-        pass
-    elif y == "wb":
-        pass
-    elif y == "wr":
-        pass
-    elif y == "wq":
-        pass
-    elif y == "wk":
-        pass
-    elif y == "bp":
-        pass
-    elif y == "bn":
-        pass
-    elif y == "bb":
-        pass
-    elif y == "br":
-        pass
-    elif y == "bq":
-        pass
-    elif y == "bk":
-        pass
 
 
 class ChessMovement(QWidget):
@@ -77,7 +38,7 @@ class ChessBoard(QWidget):
     def __init__(self, parent, controler):
         super().__init__(parent)
         self.controler = controler
-        self.board()
+        layout = self.board()  
         
         
     def board(self):        
@@ -97,15 +58,30 @@ class ChessBoard(QWidget):
                     square.setPixmap(black)
                     layout.addWidget(square, i, j)
         self.setLayout(layout)
-    
-    def piece(self):
+        return layout 
+
+class ChessPieces(QWidget):
+    def __init__(self, parent, controler):
+        super().__init__(parent)
+        self.controler = controler
+        self.pieces()
+        
+    def pieces(self):
+        layout = QGridLayout()
         piece_map = self.controler.give_map()        
         for x in range(8):
             l = piece_map[7-x]
+            j = 0
             for y in l:
                 if y is not None:
-                    add_piece(y)
-
+                    piece = QLabel()
+                    piece_type = inter_fun.add_piece(y.name)
+                    piece.setPixmap(piece_type)
+                    layout.addWidget(piece, x, j)
+                j += 1
+        self.setLayout(layout)
+    
+    
 class chessUI(QWidget):
 
     def __init__(self, parent, controler):
@@ -113,9 +89,9 @@ class chessUI(QWidget):
         vlayout = QVBoxLayout()
         hlayout = QHBoxLayout()
         self.chess_board = ChessBoard(self, controler)
-        self.chess_movement = ChessMovement(self, controler)
+        self.chess_movement = ChessMovement(self, controler)        
         hlayout.addWidget(self.chess_board,0)
-        hlayout.addWidget(self.chess_movement,1)
+        hlayout.addWidget(self.chess_movement,1)        
         vlayout.addLayout(hlayout,1)
         self.setLayout(vlayout)
     

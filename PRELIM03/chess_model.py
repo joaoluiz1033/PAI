@@ -118,8 +118,7 @@ class Board():
                 self.board_map[coord[1]][coord[0]] = pic
         
     
-    def prt(self): # print board 
-        
+    def prt(self): # print board         
         for x in range(8):
             l = self.board_map[7-x]
             for y in l:
