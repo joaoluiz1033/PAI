@@ -1,3 +1,4 @@
+import sys
 import chess_model as ch
 import pdb
 
@@ -5,8 +6,7 @@ import pdb
 class ControlerBase():
     
     def __init__(self):
-        self.clients = list()
-        self.message = ""
+        self.clients = []
     
     def addClient(self,client):
         self.clients.append(client)
@@ -48,10 +48,10 @@ class Controler(ControlerBase):
         return end_game
     
     def give_final_result(self,l_enemy_moves,king):        
-        if ch.king.is_checked(l_enemy_moves):
+        if king.is_checked(l_enemy_moves):
             print(f"Check Mate: {ch.king}")
         else:                    
-            print(f"{self.who_plays} cannot move")
+            print(f"{self.board.who_plays} cannot move")
             
     def give_who_plays(self):
         if self.board.who_plays == 'w':
@@ -62,8 +62,8 @@ class Controler(ControlerBase):
     def send_U_move(self, piece, movement,l_possible_moves):
         l_enemy_moves = self.board.move_piece_view(l_possible_moves,piece,movement)
         l_enemy_moves = self.board.simulate_check(l_enemy_moves)
-        self.board.change_who_plays()
-        self.refreshAll()        
+        self.board.change_who_plays() 
+        self.refreshAll()             
         return l_enemy_moves
     
     def send_IA_move(self,l_possible_moves):
@@ -72,5 +72,6 @@ class Controler(ControlerBase):
         self.board.change_who_plays()
         return l_enemy_moves
 
-
+if __name__ == "__main__":
+    pass
       

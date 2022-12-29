@@ -20,6 +20,7 @@ class ChessMovement(QWidget):
         self.enemy_moves = []
         self.movementUI()
         
+        
     def movementUI(self):
         layout = QVBoxLayout()
         piece_label = QLabel("Piece")
@@ -40,7 +41,8 @@ class ChessMovement(QWidget):
         layout.addWidget(valid_moves_label)
         layout.addWidget(self.valid_moves)
         layout.addWidget(self.bshow_moves)
-        self.setLayout(layout)
+        self.setLayout(layout)        
+        
         
     def User_move(self):
         piece = self.piece.text()
@@ -50,10 +52,10 @@ class ChessMovement(QWidget):
             
     def refresh(self):
         king = self.controler.give_who_plays()
-        if self.controler.give_game_state(self,l_valid_moves):
+        if self.controler.give_game_state(self.valid_movements):
             pass
         else:
-            self.controler.give_final_result(self,l_enemy_moves,king)
+            self.controler.give_final_result(self.enemy_moves,king)
     
     def show_moves(self):
         self.valid_movements = self.controler.give_valid_moves()
@@ -88,7 +90,8 @@ class ChessBoard(QWidget):
         self.setLayout(self.layout)
          
     def refresh(self):
-        self.board_pieces = ChessPieces(self,controler,self.layout)
+        self.board()
+        self.board_pieces = ChessPieces(self,self.controler,self.layout)
  
         
 class ChessPieces(QWidget):
@@ -108,8 +111,7 @@ class ChessPieces(QWidget):
             for y in l:
                 if y is not None:
                     piece = QLabel()                  
-                    piece_type = inter_fun.add_piece(y.name)               
-                                      
+                    piece_type = inter_fun.add_piece(y.name)                                      
                     piece.setPixmap(piece_type.scaled(50, 50))                  
                     self.layout.addWidget(piece, x, j)
                 j += 1
@@ -147,16 +149,15 @@ class MainWindow(QMainWindow):
         Qt.CustomizeWindowHint |
         Qt.WindowTitleHint |
         Qt.WindowCloseButtonHint |
-        Qt.WindowStaysOnTopHint
+        Qt.WindowStaysOnTopHint |
+        Qt.WindowMinimizeButtonHint
         )
 
 
 def main():
     app = QApplication([])
     controler = Controler()
-    win = MainWindow(controler) 
-    
-    controler.__init__()
+    win = MainWindow(controler)  
     win.show()
     app.exec()
     
