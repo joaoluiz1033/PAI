@@ -15,6 +15,8 @@ class ChessMovement(QWidget):
     def __init__(self, parent, controler):
         super().__init__(parent)
         self.controler = controler
+        self.valid_movements = []
+        self.enemy_moves = []
         self.movementUI()
         
     def movementUI(self):
@@ -25,14 +27,22 @@ class ChessMovement(QWidget):
         self.movement = QLineEdit()
         valid_moves_label = QLabel("Valid moves")
         self.valid_moves = QTextEdit()
+        move_button = QPushButton("Move")
+        move_button.clicked.connect(self.User_move)
         layout.addWidget(piece_label)
         layout.addWidget(self.piece)
         layout.addWidget(movement_label)        
         layout.addWidget(self.movement)
+        layout.addWidget(move_button)
         layout.addWidget(valid_moves_label)
         layout.addWidget(self.valid_moves)
         self.setLayout(layout)
-
+        
+    def User_move(self):
+        piece = self.piece.text()
+        movement = self.movement.text()
+        self.enemy_moves = self.controler.send_U_move(piece,\
+                              movement, self.valid_moves)
 
 class ChessBoard(QWidget):
     
@@ -76,7 +86,8 @@ class ChessPieces(QWidget):
             for y in l:
                 if y is not None:
                     piece = QLabel()                  
-                    piece_type = inter_fun.add_piece(y.name)                                
+                    piece_type = inter_fun.add_piece(y.name)               
+                                      
                     piece.setPixmap(piece_type.scaled(50, 50))                  
                     self.layout.addWidget(piece, x, j)
                 j += 1
