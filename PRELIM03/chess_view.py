@@ -1,4 +1,5 @@
 import sys
+import pdb
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -37,12 +38,12 @@ class ChessBoard(QWidget):
     
     def __init__(self, parent, controler):
         super().__init__(parent)
-        self.controler = controler
-        layout = self.board()  
+        self.controler = controler 
+        self.layout = QGridLayout()  
+        self.board()        
+        self.board_pieces = ChessPieces(self,controler,self.layout)        
         
-        
-    def board(self):        
-        layout = QGridLayout()
+    def board(self): 
         white = QPixmap(50, 50)
         white.fill(QColor(Qt.white))
         black = QPixmap(50, 50)
@@ -52,23 +53,24 @@ class ChessBoard(QWidget):
                 if (i + j) % 2 == 0:
                     square = QLabel()
                     square.setPixmap(white)
-                    layout.addWidget(square, i, j)
+                    self.layout.addWidget(square, i, j)
                 else:
-                    square = QLabel()
-                    square.setPixmap(black)
-                    layout.addWidget(square, i, j)
-        self.setLayout(layout)
-        return layout 
+                    square = QLabel()             
+                    square.setPixmap(black)                    
+                    self.layout.addWidget(square, i, j)
+        self.setLayout(self.layout)
+         
 
 class ChessPieces(QWidget):
-    def __init__(self, parent, controler):
+    def __init__(self, parent, controler,layout):
         super().__init__(parent)
         self.controler = controler
+        self.layout = layout
         self.pieces()
         
-    def pieces(self):
-        layout = QGridLayout()
-        piece_map = self.controler.give_map()        
+    def pieces(self):        
+        piece_map = self.controler.give_map()
+        self.controler.give_map_board()
         for x in range(8):
             l = piece_map[7-x]
             j = 0
@@ -77,9 +79,11 @@ class ChessPieces(QWidget):
                     piece = QLabel()
                     piece_type = inter_fun.add_piece(y.name)
                     piece.setPixmap(piece_type)
-                    layout.addWidget(piece, x, j)
+                    w = piece.width()
+                    print(w)
+                    #self.layout.addWidget(piece, x, j)
                 j += 1
-        self.setLayout(layout)
+        #self.setLayout(self.layout)
     
     
 class chessUI(QWidget):

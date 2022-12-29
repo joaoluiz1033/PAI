@@ -36,8 +36,8 @@ class Controler(ControlerBase):
         return self.board.board_map
     
     def give_map_board(self):
-        s = self.board.prt_silenced()
-        return s
+        self.board.prt()
+        return 
     
     def give_who_plays(self):
         pl = self.board.who_plays()
