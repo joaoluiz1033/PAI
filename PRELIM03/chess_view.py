@@ -70,18 +70,15 @@ class ChessPieces(QWidget):
         
     def pieces(self):        
         piece_map = self.controler.give_map()
-        self.controler.give_map_board()
         for x in range(8):
             l = piece_map[7-x]
             j = 0
             for y in l:
                 if y is not None:
-                    piece = QLabel()
-                    piece_type = inter_fun.add_piece(y.name)
-                    piece.setPixmap(piece_type)
-                    w = piece.width()
-                    print(w)
-                    #self.layout.addWidget(piece, x, j)
+                    piece = QLabel()                  
+                    piece_type = inter_fun.add_piece(y.name)                                
+                    piece.setPixmap(piece_type.scaled(50, 50))                  
+                    self.layout.addWidget(piece, x, j)
                 j += 1
         #self.setLayout(self.layout)
     
@@ -98,6 +95,7 @@ class chessUI(QWidget):
         hlayout.addWidget(self.chess_movement,1)        
         vlayout.addLayout(hlayout,1)
         self.setLayout(vlayout)
+        
     
 class MainWindow(QMainWindow):
 

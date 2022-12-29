@@ -5,8 +5,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-import interface_function as inter_fun
-
 from chess_control import Controler
 
 
@@ -35,3 +33,8 @@ def add_piece(y):
         return QPixmap("./images/bq.png")
     elif y == "bk":
         return QPixmap("./images/bk.png")
+    
+if __name__ == "__main__":
+    y ='wp'
+    p = add_piece(y)
+    
