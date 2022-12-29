@@ -527,8 +527,7 @@ class Board():
         end_game = False        
         i = 0
         while not end_game and i <1000: 
-            s = self.prt_silenced()
-            print(s)
+            self.prt()
             if self.who_plays == 'w':
                 king = self.w_king
             else:

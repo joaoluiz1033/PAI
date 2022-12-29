@@ -1,4 +1,5 @@
 import chess_model as ch
+import pdb
 
 
 class ControlerBase():
@@ -30,6 +31,9 @@ class Controler(ControlerBase):
             print(f"{i} -> ",x[0],x[1])
             i += 1
         return l_valid_moves
+    
+    def give_map(self):
+        return self.board.board_map
     
     def give_map_board(self):
         s = self.board.prt_silenced()
@@ -73,5 +77,5 @@ class Controler(ControlerBase):
         self.board.change_who_plays()
         return l_enemy_moves
 
-    
+
       

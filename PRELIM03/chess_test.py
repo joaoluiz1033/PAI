@@ -1,34 +1,72 @@
-from PyQt5.QtWidgets import QApplication,QWidget,QTextEdit,QVBoxLayout,QPushButton
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Dec 28 22:33:12 2022
+@author: danyz
+"""
+
 import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLabel
+from PyQt5.QtGui import QPixmap, QColor, QBrush
+from PyQt5.QtCore import Qt
 
-class TextEditDemo(QWidget):
-        def __init__(self,parent=None):
-                super().__init__(parent)
 
-                self.setWindowTitle("QTextEdit")
-                self.resize(300,270)
+app = QApplication(sys.argv)
+window = QWidget()
 
-                self.textEdit = QTextEdit()
-                self.btnPress1 = QPushButton("Button 1")
-                self.btnPress2 = QPushButton("Button 2")
 
-                layout = QVBoxLayout()
-                layout.addWidget(self.textEdit)
-                layout.addWidget(self.btnPress1)
-                layout.addWidget(self.btnPress2)
-                self.setLayout(layout)
+layout = QGridLayout()
+window.setLayout(layout)
 
-                self.btnPress1.clicked.connect(self.btnPress1_Clicked)
-                self.btnPress2.clicked.connect(self.btnPress2_Clicked)
 
-        def btnPress1_Clicked(self):
-                self.textEdit.setPlainText("Hello PyQt5!\nfrom pythonpyqt.com")
+white_square = QPixmap(50, 50)
+white_square.fill(QColor(Qt.white))
 
-        def btnPress2_Clicked(self):
-                self.textEdit.setHtml("<font color='red' size='6'><red>Hello PyQt5!\nHello</font>")
 
-if __name__ == '__main__':
-        app = QApplication(sys.argv)
-        win = TextEditDemo()
-        win.show()
-        sys.exit(app.exec_())
+black_square = QPixmap(50, 50)
+black_square.fill(QColor(160,82,45))
+# Load the images for the chess pieces
+white_pawn = QPixmap("./images/wp.png")
+white_knight = QPixmap("white_knight.png")
+white_bishop = QPixmap("white_bishop.png")
+white_rook = QPixmap("white_rook.png")
+white_queen = QPixmap("white_queen.png")
+white_king = QPixmap("white_king.png")
+black_pawn = QPixmap("black_pawn.png")
+black_knight = QPixmap("black_knight.png")
+black_bishop = QPixmap("black_bishop.png")
+black_rook = QPixmap("black_rook.png")
+black_queen = QPixmap("black_queen.png")
+black_king = QPixmap("black_king.png")
+
+# Add the squares and pieces to the grid layout in the correct order
+piece = QLabel()
+piece.setPixmap(white_pawn.size(1))
+
+for i in range(8):
+    for j in range(8):
+        if (i + j) % 2 == 0:
+            square = QLabel()
+            square.setPixmap(white_square)
+            
+            layout.addWidget(square, i, j)
+            
+        else:
+            square = QLabel()
+            square.setPixmap(black_square)
+            layout.addWidget(square, i, j)
+            layout.addWidget(piece, i,j)
+
+# Add the white pieces to the bottom of the board
+# for j in range(8):
+#     piece = QLabel()
+#     piece.setPixmap(white_pawn)    
+#     layout.addWidget(piece, j)
+
+# Create the main window
+
+
+# Show the main window
+window.show()
+
+# Run the main loop
+app.exec_()
