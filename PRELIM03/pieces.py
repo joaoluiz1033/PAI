@@ -9,6 +9,7 @@ class pieces():
     def __init__(self,name,pos):
         self.name = name        
         self.pos_alg = pos
+        self.score = 0
         self.history_mov = []        
         
     def __repr__(self):

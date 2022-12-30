@@ -14,8 +14,7 @@ import bishop as b
 import queen as q
 import king as k
 import coordinates 
-import datetime
-import os
+import chess_IA as chIA
 
 def is_empty(l):    
     '''     
@@ -333,25 +332,21 @@ class Board():
         
         return idx        
             
-    def move(self,l_possible_moves):
+    def move(self,level,l_possible_moves):
         '''
         Parameters
         ----------
         l_possible_moves : LIST
             LIST OF POSSIBLE MOVES FOR THE PLAYER.
-
         Returns
         -------
         l_possible_moves : LIST
             POSSIBLE MOVES MODIFIED (RECENT MOVE DELETED).
-
         '''
-        a = False         
-        
+        a = False   
         if is_empty(l_possible_moves):
             return l_possible_moves
-        else:
-            
+        else:            
             if self.who_plays == 'w':
                 pieces_board = self.whites_in_board
                 enemies_board = self.blacks_in_board
@@ -362,31 +357,23 @@ class Board():
                 enemies_board = self.whites_in_board
                 king = self.b_king
                 add = -1
-                
-            valid = False
-            while not valid:
-                l = random.choice(l_possible_moves)
-                idx_pawn = l_possible_moves.index(l)
-                piece = l[0]
-                if len(l[1]) > 0:
-                    valid = True
-                    
-            movement = random.choice(l[1])    
+            l_infos = chIA.moveIA(level,l_possible_moves)
+            #pdb.set_trace()
+            l = l_infos[0]
+            idx_pawn = l_infos[1]
+            piece = l_infos[2]
+            movement = l_infos[3]
             movement_xy = coordinates.convert_to_coordinate(movement)
             x = movement_xy [0]
-            y = movement_xy [1]
-            
+            y = movement_xy [1]            
             old_xy = coordinates.convert_to_coordinate(piece.pos_alg)
             old_y = old_xy[1]
-            old_x = old_xy[0]
-                        
-            if piece in pieces_board: 
-                              
+            old_x = old_xy[0]                        
+            if piece in pieces_board:                              
                 if self.board_map[y][x] is not None:                    
                     if self.board_map[y][x].name[1] == 'k':
                         return []  
-                    enemies_board.remove(self.board_map[y][x])
-                    
+                    enemies_board.remove(self.board_map[y][x])                    
                 else:
                     if piece.name[1] == 'p':
                         if abs(old_x - x) != 0:                            
@@ -402,32 +389,24 @@ class Board():
                             pieces_board[idx_rook].pos_alg = rook_pos
                 idx = pieces_board.index(piece)
                 pieces_board[idx].pos_alg = movement
-                piece.history_mov.append(movement)
-                
+                piece.history_mov.append(movement)                
                 self.last_movement = movement
                 l[1].remove(movement)
                 if piece.name[1] == 'k':
-                    king.pos_alg = movement                
-                
+                    king.pos_alg = movement         
                 if piece.name[1] == 'p':                   
                     if pieces_board[idx].at_max():                        
                         new_l = self.change_pawn(movement,pieces_board,\
                           idx,pieces_board[idx].team )                           
-                        l_possible_moves[idx_pawn] = new_l     
-                    
+                        l_possible_moves[idx_pawn] = new_l                
                     elif abs(old_y - y) == 2:
                         self.register_en_passant(x,y,piece,add,enemies_board)
-                   
             self.current_board()
-            l_possible_moves = self.possible_moves()
-            
-            
+            l_possible_moves = self.possible_moves()            
             if a:
                 return []
             else:
-                return l_possible_moves
-
-    
+                return l_possible_moves    
     
     def move_piece(self, piece, movement):        
         if self.who_plays == 'w':
@@ -512,8 +491,7 @@ class Board():
                         if not king.is_checked(l_enemy_moves):
                             piece_valid_movements.append(movement)
             valid_list.append([piece,piece_valid_movements])        
-        return valid_list    
-           
+        return valid_list       
     
     def game(self):
         '''
@@ -543,7 +521,7 @@ class Board():
                 if self.who_plays == 'w':
                     l_enemy_moves = self.move_choose(l_valid_moves)
                 else:
-                    l_enemy_moves = self.move(l_valid_moves)
+                    l_enemy_moves = self.move(1,l_valid_moves)
                 l_enemy_moves = self.simulate_check(l_enemy_moves)
                 self.change_who_plays()            
             i += 1       
@@ -581,8 +559,7 @@ class Board():
                 if len(l_possible_moves[l][1]) > 0:
                     valid = True
                 if valid == False:
-                    return
-                            
+                    return                            
             movement = m_mov     
             movement_xy = coordinates.convert_to_coordinate(movement)
             x = movement_xy [0]

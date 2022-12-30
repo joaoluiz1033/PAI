@@ -40,12 +40,8 @@ class knight(pieces.pieces):
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
+        self.score = 6
         
-    
-            
-                
-            
-        return
     def check_moves(self,board_map):
         #check and return possible moves
         #knight can take at maximum 8 positions

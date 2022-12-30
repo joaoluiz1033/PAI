@@ -47,6 +47,7 @@ class rook(pieces.pieces):
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
+        self.score = 6
         
     
     def check_moves(self,board_map):

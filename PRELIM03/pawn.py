@@ -66,6 +66,7 @@ class pawn(pieces.pieces):
         super().__init__(name,pos)
         self.team = name[0]
         self.en_passante_moves = []
+        self.score = 1
         
               
         
