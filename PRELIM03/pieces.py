@@ -27,6 +27,12 @@ class pieces():
     def move(self,final_pos):
         #move piece from current position to final position
         self.pos_alg = final_pos
+        
+    def in_danger(self,movement,enemy_moves):
+        for sublist in enemy_moves:            
+            if movement in sublist[1]:                
+                return True         
+        return False
 
     
 

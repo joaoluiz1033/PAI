@@ -16,6 +16,7 @@ import king as k
 import coordinates 
 import chess_IA as chIA
 
+
 def is_empty(l):    
     '''     
     Parameters
@@ -332,7 +333,7 @@ class Board():
         
         return idx        
             
-    def move(self,level,l_possible_moves):
+    def move(self,level,l_possible_moves,l_enemy_moves):
         '''
         Parameters
         ----------
@@ -357,7 +358,7 @@ class Board():
                 enemies_board = self.whites_in_board
                 king = self.b_king
                 add = -1
-            l_infos = chIA.moveIA(level,l_possible_moves)
+            l_infos = chIA.moveIA(level,l_possible_moves,l_enemy_moves)
             #pdb.set_trace()
             l = l_infos[0]
             idx_pawn = l_infos[1]
@@ -521,7 +522,8 @@ class Board():
                 if self.who_plays == 'w':
                     l_enemy_moves = self.move_choose(l_valid_moves)
                 else:
-                    l_enemy_moves = self.move(1,l_valid_moves)
+                    l_enemy_moves = self.move(\
+                                  1,l_valid_moves,l_enemy_moves)
                 l_enemy_moves = self.simulate_check(l_enemy_moves)
                 self.change_who_plays()            
             i += 1       

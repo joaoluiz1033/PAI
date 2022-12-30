@@ -84,43 +84,14 @@ class king(pieces.pieces):
         l = king_moves(g_pos,0,1,l,board_map,self.team)
         l = king_moves(g_pos,-1,-1,l,board_map,self.team)
         l = king_moves(g_pos,-1,0,l,board_map,self.team)
-        l = king_moves(g_pos,-1,1,l,board_map,self.team)
-            
-        l_roque = self.roque(board_map)
-        
+        l = king_moves(g_pos,-1,1,l,board_map,self.team)            
+        l_roque = self.roque(board_map)        
         for move_roque in l_roque:
             l.append(move_roque)        
         return l
-        
-     
-        
-#     def is_checked(self,moves):
-# #this function verifies if king is in check
-# #to be in check
-#         coord=self.pos_alg
-#         checked=False 
-#         for sublist in moves:
-#             if coord in sublist[1]:
-#                 checked=True 
-#                 break
-#         return checked 
-    def is_checked(self,enemy_moves):
-        '''
-        this function verifies if king is checked and where it can go 
 
-        Parameters
-        ----------
-        enemy_moves : List
-            possible movements from enemies.
-
-        Returns
-        -------
-        True if king is in check, False otherwise.
-
-        '''
-        
-        king_pos = self.pos_alg        
-       
+    def is_checked(self,enemy_moves):        
+        king_pos = self.pos_alg      
         for sublist in enemy_moves:            
             if king_pos in sublist[1]: #verifying if king is in check                
                 return True         
