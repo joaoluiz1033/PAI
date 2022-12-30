@@ -180,11 +180,9 @@ class Board():
         
         return [p,p.check_moves(self.board_map)]
     
-    def register_en_passant(self,x,y,piece,add,enemies_board):
-        
+    def register_en_passant(self,x,y,piece,add,enemies_board):        
         X_MIN = 0
-        X_MAX = 7    
-        
+        X_MAX = 7            
         if x == X_MIN:
             if self.board_map[y][x+1] is not None:                    
                 if self.board_map[y][x+1].name[1] == 'p' and \
@@ -206,19 +204,16 @@ class Board():
                             if enemy_p == self.board_map[y][x-1]:
                                 enemy_p.en_passante_moves.append(\
                         coordinates.reconvert_to_alg([x_pass,y_pass]))
-        else:
-            
+        else:            
             if self.board_map[y][x+1] is not None:                    
                 if self.board_map[y][x+1].name[1] == 'p' and \
                     self.board_map[y][x+1].name[0] != self.who_plays:
                         x_pass = x 
-                        y_pass = y - add
-                        
+                        y_pass = y - add                        
                         for enemy_p in enemies_board:
                             if enemy_p == self.board_map[y][x+1]:
                                 enemy_p.en_passante_moves.append(\
-                        coordinates.reconvert_to_alg([x_pass,y_pass]))
-                        
+                        coordinates.reconvert_to_alg([x_pass,y_pass]))                        
             if self.board_map[y][x-1] is not None:                    
                 if self.board_map[y][x-1].name[1] == 'p' and \
                     self.board_map[y][x-1].name[0] != self.who_plays:
@@ -228,7 +223,6 @@ class Board():
                             if enemy_p == self.board_map[y][x-1]:
                                 enemy_p.en_passante_moves.append(\
                         coordinates.reconvert_to_alg([x_pass,y_pass]))
-                       
         return
     
     def change_who_plays(self):
@@ -316,10 +310,8 @@ class Board():
             else:
                 return l_possible_moves
     
-    def find_rook(self,pieces_board,direction):
-        
-        idx = 0
-        
+    def find_rook(self,pieces_board,direction):        
+        idx = 0        
         if direction == 1:
             x_ref = 7
         else:
@@ -329,8 +321,7 @@ class Board():
             if piece.name[1] == 'r':
                 x = coordinates.convert_to_coordinate(piece.pos_alg)[0]
                 if x == x_ref:
-                    return idx
-        
+                    return idx       
         return idx        
             
     def move(self,level,l_possible_moves,l_enemy_moves):
@@ -358,8 +349,7 @@ class Board():
                 enemies_board = self.whites_in_board
                 king = self.b_king
                 add = -1
-            l_infos = chIA.moveIA(level,l_possible_moves,l_enemy_moves)
-            #pdb.set_trace()
+            l_infos = chIA.moveIA(self,level,l_possible_moves,l_enemy_moves)
             l = l_infos[0]
             idx_pawn = l_infos[1]
             piece = l_infos[2]
@@ -492,7 +482,9 @@ class Board():
                         if not king.is_checked(l_enemy_moves):
                             piece_valid_movements.append(movement)
             valid_list.append([piece,piece_valid_movements])        
-        return valid_list       
+        return valid_list 
+
+    
     
     def game(self):
         '''
@@ -523,7 +515,7 @@ class Board():
                     l_enemy_moves = self.move_choose(l_valid_moves)
                 else:
                     l_enemy_moves = self.move(\
-                                  1,l_valid_moves,l_enemy_moves)
+                                  2,l_valid_moves,l_enemy_moves)
                 l_enemy_moves = self.simulate_check(l_enemy_moves)
                 self.change_who_plays()            
             i += 1       
