@@ -119,6 +119,7 @@ class ChessPieces(QWidget):
     def refresh(self):
         self.pieces()
     
+    
 class chessUI(QWidget):
 
     def __init__(self, parent, controler):
@@ -131,6 +132,50 @@ class chessUI(QWidget):
         hlayout.addWidget(self.chess_movement,1)        
         vlayout.addLayout(hlayout,1)
         self.setLayout(vlayout)
+
+
+class chessMenu(QWidget):
+    
+    def __init__(self, parent, controler):
+        super().__init__(parent)
+        self.controler = controler 
+        game_type = QComboBox()
+        game_type.addItems(["Player vs Player", "Player vs IA", "IA vs IA"])
+        game_type_label = QLabel("Type of game")
+        IA_level = QComboBox()
+        IA_level.addItems(["Random","Not that stupid","Ok","Hard AF"])
+        IA_level_label = QLabel("IA level (if any)")
+        start_button = QPushButton("Begin match")
+        start_button.clicked.connect(self.start_game)
+        game_server = QComboBox()
+        game_server.addItems(["Offline","Online"])
+        game_server_label = QLabel("Server")
+        layout = QVBoxLayout()
+        layout.addWidget(game_type_label)
+        layout.addWidget(game_type)
+        layout.addWidget(IA_level_label)
+        layout.addWidget(IA_level)
+        layout.addWidget(game_server_label)
+        layout.addWidget(game_server)
+        layout.addWidget(start_button)        
+        self.setLayout(layout)        
+    
+    def start_game(self):   
+        self.mainwidget = chessUI(self,controler)
+        self.setCentralWidget(self.mainwidget)
+        return True
+        
+
+class chessIni(QWidget):
+    
+    def __init__(self, parent, controler):
+        super().__init__(parent)
+        vlayout = QVBoxLayout()
+        hlayout = QHBoxLayout()
+        self.menu = chessMenu(self,controler)
+        hlayout.addWidget(self.menu,0)
+        vlayout.addLayout(hlayout,1)
+        self.setLayout(vlayout)
         
     
 class MainWindow(QMainWindow):
@@ -141,9 +186,27 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon('./images/wb.png'))
         status_bar = QStatusBar()
         self.setStatusBar(status_bar)
-        status_bar.showMessage('Xadrez version 1.0')
-        self.mainwidget = chessUI(self, controler)
-        self.setCentralWidget(self.mainwidget)
+        self.controler = controler
+        status_bar.showMessage('Xadrez version 1.0')         
+        game_type = QComboBox()
+        game_type.addItems(["Player vs Player", "Player vs IA", "IA vs IA"])
+        game_type_label = QLabel("Type of game")
+        IA_level = QComboBox()
+        IA_level.addItems(["Random","Not that stupid","Ok","Hard AF"])
+        IA_level_label = QLabel("IA level (if any)")
+        start_button = QPushButton("Begin match")
+        start_button.clicked.connect(self.start_game)
+        game_server = QComboBox()
+        game_server.addItems(["Offline","Online"])
+        game_server_label = QLabel("Server")
+        layout = QVBoxLayout()
+        layout.addWidget(game_type_label)
+        layout.addWidget(game_type)
+        layout.addWidget(IA_level_label)
+        layout.addWidget(IA_level)
+        layout.addWidget(game_server_label)
+        layout.addWidget(game_server)
+        layout.addWidget(start_button)
         self.setWindowFlags(
         Qt.Window |
         Qt.CustomizeWindowHint |
@@ -152,7 +215,15 @@ class MainWindow(QMainWindow):
         Qt.WindowStaysOnTopHint |
         Qt.WindowMinimizeButtonHint
         )
-
+        w = QWidget()
+        w.setLayout(layout)
+        self.setCentralWidget(w)
+        
+    def start_game(self):   
+        self.mainwidget = chessUI(self,self.controler)
+        self.setCentralWidget(self.mainwidget)
+        self.setGeometry(300, 100, 700, 500)
+        return True
 
 def main():
     app = QApplication([])
