@@ -18,8 +18,8 @@ class ChessMovement(QWidget):
         self.controler.addClient(self)
         self.valid_movements = []
         self.enemy_moves = []
-        self.movementUI()
-        
+        self.turn = 1
+        self.movementUI()       
         
     def movementUI(self):
         layout = QVBoxLayout()
@@ -31,8 +31,8 @@ class ChessMovement(QWidget):
         self.valid_moves = QTextEdit()
         move_button = QPushButton("Move")
         move_button.clicked.connect(self.User_move)
-        self.bshow_moves = QPushButton("Show Possible Moves")
-        self.bshow_moves.clicked.connect(self.show_moves)
+        self.bshow_moves = QPushButton("Show Possible Moves")        
+        self.bshow_moves.clicked.connect(self.show_moves)         
         layout.addWidget(piece_label)
         layout.addWidget(self.piece)
         layout.addWidget(movement_label)        
@@ -41,19 +41,23 @@ class ChessMovement(QWidget):
         layout.addWidget(valid_moves_label)
         layout.addWidget(self.valid_moves)
         layout.addWidget(self.bshow_moves)
-        self.setLayout(layout)        
-        
+        self.setLayout(layout)
         
     def User_move(self):
         piece = self.piece.text()
         movement = self.movement.text()
         self.enemy_moves = self.controler.send_U_move(piece,\
                               movement, self.valid_movements)
+        
+    def IA_move(self):
+        self.show_moves_IA()
+        self.enemy_moves = self.controler.send_IA_move\
+            (self.valid_movements, self.enemy_moves)        
             
     def refresh(self):
         king = self.controler.give_who_plays()
-        if self.controler.give_game_state(self.valid_movements):
-            pass
+        if not self.controler.give_game_state(self.valid_movements):
+            self.IA_move()
         else:
             self.controler.give_final_result(self.enemy_moves,king)
     
@@ -61,6 +65,10 @@ class ChessMovement(QWidget):
         self.valid_movements = self.controler.give_valid_moves()
         self.valid_moves.setPlainText(\
                           inter_fun.moves_to_string(self.valid_movements))
+    
+    def show_moves_IA(self):
+        self.valid_movements = self.controler.give_valid_moves()
+        
 
 class ChessBoard(QWidget):
     

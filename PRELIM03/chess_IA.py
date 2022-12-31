@@ -65,7 +65,7 @@ def minimax():
 
 def moveIA(board,level,possible_moves,enemy_moves):
     if level == 1:
-        l_infos =random_move(board,possible_moves,enemy_moves)
+        l_infos =random_move(possible_moves,enemy_moves)
         return l_infos
     elif level == 2:
         l_infos = conquer_mid(board,possible_moves,enemy_moves)
