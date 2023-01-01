@@ -1,5 +1,4 @@
 import sys
-import pdb
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -9,6 +8,11 @@ import interface_function as inter_fun
 
 from chess_control import Controler
 
+def debug_trace():
+    from PyQt5.QtCore import pyqtRemoveInputHook
+    from pdb import set_trace
+    pyqtRemoveInputHook()
+    set_trace()
 
 class ChessMovement(QWidget):
     
@@ -31,8 +35,9 @@ class ChessMovement(QWidget):
         self.valid_moves = QTextEdit()
         move_button = QPushButton("Move")
         move_button.clicked.connect(self.User_move)
-        self.bshow_moves = QPushButton("Show Possible Moves")        
-        self.bshow_moves.clicked.connect(self.show_moves)         
+        self.bshow_moves = QPushButton("Start")        
+        self.bshow_moves.clicked.connect(self.show_moves)
+        self.game_info = QTextEdit()         
         layout.addWidget(piece_label)
         layout.addWidget(self.piece)
         layout.addWidget(movement_label)        
@@ -48,18 +53,27 @@ class ChessMovement(QWidget):
         movement = self.movement.text()
         self.enemy_moves = self.controler.send_U_move(piece,\
                               movement, self.valid_movements)
+        #self.controler.send_who_plays()
+        go = self.refresh()
+        if go:
+            self.IA_move()
+            #self.controler.send_who_plays()
+        else:
+            self.controler.refreshAll()
         
     def IA_move(self):
         self.show_moves_IA()
         self.enemy_moves = self.controler.send_IA_move\
-            (self.valid_movements, self.enemy_moves)        
-            
+            (self.valid_movements, self.enemy_moves)
+    
     def refresh(self):
-        king = self.controler.give_who_plays()
+        king = self.controler.give_who_plays()  
+        self.show_moves()
         if not self.controler.give_game_state(self.valid_movements):
-            self.IA_move()
-        else:
+            return True
+        else:            
             self.controler.give_final_result(self.enemy_moves,king)
+            return False
     
     def show_moves(self):
         self.valid_movements = self.controler.give_valid_moves()
@@ -68,6 +82,7 @@ class ChessMovement(QWidget):
     
     def show_moves_IA(self):
         self.valid_movements = self.controler.give_valid_moves()
+        
         
 
 class ChessBoard(QWidget):
@@ -99,7 +114,7 @@ class ChessBoard(QWidget):
          
     def refresh(self):
         self.board()
-        self.board_pieces = ChessPieces(self,self.controler,self.layout)
+        #self.board_pieces = ChessPieces(self,self.controler,self.layout)
  
         
 class ChessPieces(QWidget):
@@ -112,7 +127,7 @@ class ChessPieces(QWidget):
         self.pieces()
         
     def pieces(self):        
-        piece_map = self.controler.give_map()
+        piece_map = self.controler.give_map()        
         for x in range(8):
             l = piece_map[7-x]
             j = 0
