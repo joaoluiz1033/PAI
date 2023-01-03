@@ -1,21 +1,24 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsEllipseItem
-from PyQt5.QtCore import Qt, QPointF
+
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
 class MovingObject(QGraphicsEllipseItem):
-    def __init__(self, x, y, r):
+    def __init__(self, x, y, r,app):
         super().__init__(0, 0, r, r)
         self.setPos(x, y)
         self.setBrush(Qt.blue)
         self.setAcceptHoverEvents(True)
+        self.app = app
 
     # mouse hover event
     def hoverEnterEvent(self, event):
-        app.instance().setOverrideCursor(Qt.OpenHandCursor)
+        self.app.instance().setOverrideCursor(Qt.OpenHandCursor)
 
     def hoverLeaveEvent(self, event):
-        app.instance().restoreOverrideCursor()
+        self.app.instance().restoreOverrideCursor()
 
     # mouse click event
     def mousePressEvent(self, event):
@@ -35,20 +38,35 @@ class MovingObject(QGraphicsEllipseItem):
         print('x: {0}, y: {1}'.format(self.pos().x(), self.pos().y()))
 
 class GraphicView(QGraphicsView):
-    def __init__(self):
+    def __init__(self,app):
         super().__init__()
-
         self.scene = QGraphicsScene()
         self.setScene(self.scene)       
         self.setSceneRect(0, 0, 1200, 1000)
-
-        self.moveObject = MovingObject(50, 50, 40)
+        self.moveObject = MovingObject(50, 50, 40,app)
         # self.moveObject2 = MovingObject(100, 100, 100)
         self.scene.addItem(self.moveObject)
         # self.scene.addItem(self.moveObject2)
 
+class MainWindow(QMainWindow):
+    def __init__(self,app):
+        super().__init__()
+        self.setWindowTitle("Xadrez")
+        self.setWindowIcon(QIcon('./images/bk.png'))
+        self.mainwidget = GraphicView(app)
+        self.setCentralWidget(self.mainwidget)
 
-app = QApplication(sys.argv)
-view = GraphicView()
-view.show()
-sys.exit(app.exec_())
+def main():
+    app = QApplication([])
+    win = MainWindow(app)  
+    win.show()
+    app.exec()
+    # app = QApplication(sys.argv)
+    # view = GraphicView(app)
+    # view.show()
+    # sys.exit(app.exec_())
+    
+    
+if __name__ == '__main__':
+    main()
+    

@@ -44,7 +44,7 @@ class ChessMovement(QWidget):
         elif self.controler.game_type == 3:
             move_button = QPushButton("Simulate")
             move_button.clicked.connect(self.IAIA2)            
-        self.bshow_moves = QPushButton("Start")        
+        self.bshow_moves = QPushButton("Show moves (delete this button)")        
         self.bshow_moves.clicked.connect(self.show_moves)        
         layout.addWidget(piece_label)
         layout.addWidget(self.piece)
@@ -55,8 +55,13 @@ class ChessMovement(QWidget):
         layout.addWidget(self.valid_moves)
         layout.addWidget(self.bshow_moves)
         self.setLayout(layout)
+        if self.controler.user == 'b':
+            self.IA_move()
+            self.controler.refreshAll()
+        else:
+            self.show_moves()
         
-    def playerVSIA(self):
+    def playerVSIA(self):                
         piece = self.piece.text()
         movement = self.movement.text()
         self.enemy_moves = self.controler.send_U_move(piece,\
@@ -68,9 +73,8 @@ class ChessMovement(QWidget):
             self.controler.refreshAll()
         else:
             self.controler.refreshAll()
-        
+                
     def IA_move(self):
-        #time.sleep(1)
         self.show_moves_IA()
         self.enemy_moves = self.controler.send_IA_move\
             (self.valid_movements, self.enemy_moves)
@@ -115,7 +119,7 @@ class ChessMovement(QWidget):
     def show_moves(self):
         self.valid_movements = self.controler.give_valid_moves()
         self.valid_moves.setPlainText(\
-                          inter_fun.moves_to_string(self.valid_movements))
+                      inter_fun.moves_to_string(self.valid_movements))  
     
     def show_moves_IA(self):
         self.valid_movements = self.controler.give_valid_moves()
@@ -136,7 +140,7 @@ class ChessBoard(QWidget):
         white = QPixmap(50, 50)
         white.fill(QColor(Qt.white))
         black = QPixmap(50, 50)
-        black.fill(QColor(160,82,45))        
+        black.fill(QColor(160,82,45))
         for i in range(8):
             for j in range(8):
                 if (i + j) % 2 == 0:
@@ -164,18 +168,30 @@ class ChessPieces(QWidget):
         self.pieces()
         
     def pieces(self):        
-        piece_map = self.controler.give_map()        
-        for x in range(8):
-            l = piece_map[7-x]
-            j = 0
-            for y in l:
-                if y is not None:
-                    piece = QLabel()                  
-                    piece_type = inter_fun.add_piece(y.name)                                      
-                    piece.setPixmap(piece_type.scaled(50, 50))                  
-                    self.layout.addWidget(piece, x, j)
-                j += 1
-        
+        piece_map = self.controler.give_map() 
+        if self.controler.user == 'w':        
+            for x in range(8):
+                l = piece_map[7-x]
+                j = 0
+                for y in l:
+                    if y is not None:
+                        piece = QLabel()                  
+                        piece_type = inter_fun.add_piece(y.name)                                      
+                        piece.setPixmap(piece_type.scaled(50, 50))                  
+                        self.layout.addWidget(piece, x, j)
+                    j += 1
+        else:
+            for x in range(8):
+                l = piece_map[x]
+                j = 0
+                for y in l:
+                    if y is not None:
+                        piece = QLabel()                  
+                        piece_type = inter_fun.add_piece(y.name)                                      
+                        piece.setPixmap(piece_type.scaled(50, 50))                  
+                        self.layout.addWidget(piece, x, j)
+                    j += 1
+                    
     def refresh(self):
         self.pieces()
     
