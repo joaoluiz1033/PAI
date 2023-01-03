@@ -77,6 +77,9 @@ class Controler(ControlerBase):
         l_enemy_moves = self.board.simulate_check(l_enemy_moves)
         self.board.change_who_plays()
         return l_enemy_moves
+    
+    def clicked_piece(self,piece):
+        return [piece.x,piece.j]
 
 if __name__ == "__main__":
     pass

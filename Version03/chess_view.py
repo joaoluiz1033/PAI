@@ -16,6 +16,15 @@ def debug_trace():
     pyqtRemoveInputHook()
     set_trace()
 
+
+class ClickableLabel(QLabel):
+    clicked = pyqtSignal()
+    
+    def mousePressEvent(self, event: QMouseEvent):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()
+
+
 class ChessMovement(QWidget):
     
     def __init__(self, parent, controler):
@@ -125,6 +134,8 @@ class ChessMovement(QWidget):
         self.valid_movements = self.controler.give_valid_moves()
         
         
+        
+        
 
 class ChessBoard(QWidget):
     
@@ -167,6 +178,11 @@ class ChessPieces(QWidget):
         self.layout = layout
         self.pieces()
         
+    def piece_clicked(self):
+        piece = self.sender()
+        self.controler.piece_clicked(piece)
+        print("clicked:", piece.x, piece.j)
+        
     def pieces(self):        
         piece_map = self.controler.give_map() 
         if self.controler.user == 'w':        
@@ -175,9 +191,12 @@ class ChessPieces(QWidget):
                 j = 0
                 for y in l:
                     if y is not None:
-                        piece = QLabel()                  
+                        piece = ClickableLabel()                  
+                        piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
-                        piece.setPixmap(piece_type.scaled(50, 50))                  
+                        piece.setPixmap(piece_type.scaled(50, 50))
+                        piece.x = x
+                        piece.j = j
                         self.layout.addWidget(piece, x, j)
                     j += 1
         else:
@@ -186,9 +205,12 @@ class ChessPieces(QWidget):
                 j = 0
                 for y in l:
                     if y is not None:
-                        piece = QLabel()                  
+                        piece = ClickableLabel()                  
+                        piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
-                        piece.setPixmap(piece_type.scaled(50, 50))                  
+                        piece.setPixmap(piece_type.scaled(50, 50))
+                        piece.x = x
+                        piece.j = j                  
                         self.layout.addWidget(piece, x, j)
                     j += 1
                     

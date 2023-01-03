@@ -122,8 +122,7 @@ class Board():
     def prt(self): # print board         
         for x in range(8):
             l = self.board_map[7-x]
-            for y in l:
-                
+            for y in l:                
                 if y == None:
                     print('.  ',end='')
                 else:
