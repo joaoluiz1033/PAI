@@ -31,7 +31,9 @@ class Controler(ControlerBase):
         self.selected_moves_alg = []
         self.selected_moves_geo = []
         self.piece = []
+        self.pos = []
         self.make_move = False
+        self.l_enemy_moves = []
         
     def give_valid_moves(self):
         self.l_possible_moves = self.board.possible_moves()            
@@ -100,8 +102,8 @@ class Controler(ControlerBase):
         self.make_move = True
         self.refreshAll()
     
-    def user_move(self,pos):
-        movement = coordinates.reconvert_to_alg(pos)
+    def user_move(self):
+        movement = coordinates.reconvert_to_alg(self.pos)
         self.valid_movements = self.give_valid_moves()
         self.l_enemy_moves = self.send_U_move(self.piece,movement) 
         king = self.give_who_plays()  
@@ -115,6 +117,11 @@ class Controler(ControlerBase):
         self.selected_moves_geo = []
         self.make_move = False
         self.refreshAll()   
+        
+    def IA_initial_move(self):
+        self.valid_movements = self.give_valid_moves()
+        self.l_enemy_moves = self.send_IA_move()
+        self.refreshAll()
         
 
 if __name__ == "__main__":

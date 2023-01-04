@@ -34,18 +34,19 @@ class ChessBoard(QWidget):
         
         self.layout = QGridLayout()  
         self.board()        
-        self.board_pieces = ChessPieces(self,controler,self.layout)        
+        self.board_pieces = ChessPieces(self,controler,self.layout)
+        if self.controler.user == 'b':
+            self.controler.IA_initial_move()
     
     def square_clicked(self):
         piece = self.sender()
         self.controler.make_move = True
-        self.controler.clicked_piece(piece)
-        
+        self.controler.clicked_piece(piece)        
         
     def move(self):
         case = self.sender()
-        self.controler.user_move([case.x,case.j]) 
-        
+        self.controler.pos = [case.x,case.j]
+        self.controler.user_move()         
         
     def board(self): 
         white = QPixmap(73,73)
@@ -75,11 +76,14 @@ class ChessBoard(QWidget):
                 for pos in self.controler.selected_moves_geo:
                     square = ClickableLabel()            
                     square.clicked.connect(self.move)                 
-                    square.setPixmap(pos_color)
+                    square.setPixmap(pos_color)                    
                     square.j = pos[1]
-                    square.x = pos[0]
+                    square.x = pos[0]                    
                     square.type = 's'
-                    self.layout.addWidget(square, 7-pos[1], pos[0])
+                    if self.controler.user == 'w':
+                        self.layout.addWidget(square, 7-pos[1], pos[0])
+                    else:
+                        self.layout.addWidget(square, pos[1], pos[0])
         self.setLayout(self.layout)  
         
     def refresh(self):
@@ -96,19 +100,18 @@ class ChessPieces(QWidget):
         self.layout = layout
         self.pieces()
         
-    def piece_clicked(self):          
-        piece = self.sender() 
+    def piece_clicked(self):         
+        piece = self.sender()
         if self.controler.make_move == False:
             self.controler.clicked_piece(piece)
         else:
             if coordinates.reconvert_to_alg([piece.j,7-piece.x]) in \
-                self.controler.selected_moves_alg:                    
-                    self.controler.user_move([piece.j,7-piece.x])
+                self.controler.selected_moves_alg:
+                    self.controler.pos = [piece.j,7-piece.x]                    
+                    self.controler.user_move()
             else:
                 self.controler.make_move = False
-                self.controler.clicked_piece(piece)
-        
-            
+                self.controler.clicked_piece(piece)            
         
     def pieces(self):        
         piece_map = self.controler.give_map() 
@@ -137,7 +140,7 @@ class ChessPieces(QWidget):
                         piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
                         piece.setPixmap(piece_type.scaled(73,73))
-                        piece.x = x
+                        piece.x = 7 - x
                         piece.j = j   
                         piece.type = 'p'
                         self.layout.addWidget(piece, x, j)
