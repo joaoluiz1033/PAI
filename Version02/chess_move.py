@@ -105,7 +105,8 @@ def move_piece_view(board,l_possible_moves,p_number,m_mov):
         y = movement_xy [1]            
         old_xy = coordinates.convert_to_coordinate(piece.pos_alg)
         old_y = old_xy[1]
-        old_x = old_xy[0]                        
+        old_x = old_xy[0]   
+        print(old_x,x)                     
         if piece in pieces_board:                               
             if board.board_map[y][x] is not None:                    
                 if board.board_map[y][x].name[1] == 'k':

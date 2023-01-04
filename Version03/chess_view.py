@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 
 import interface_function as inter_fun
 import chess_ql as ql
+import coordinates
 
 from chess_control import Controler
 
@@ -18,152 +19,69 @@ def debug_trace():
 
 
 class ClickableLabel(QLabel):
-    clicked = pyqtSignal()
     
+    clicked = pyqtSignal()    
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.clicked.emit()
-
-
-class ChessMovement(QWidget):
-    
-    def __init__(self, parent, controler):
-        super().__init__(parent)        
-        self.controler = controler
-        self.controler.addClient(self)
-        self.valid_movements = []
-        self.enemy_moves = []
-        self.turn = 1
-        self.movementUI()       
-        
-    def movementUI(self):
-        layout = QVBoxLayout()
-        piece_label = QLabel("Piece")
-        self.piece = QLineEdit()
-        movement_label = QLabel("Movement")
-        self.movement = QLineEdit()
-        valid_moves_label = QLabel("Valid moves")
-        self.valid_moves = QTextEdit()        
-        if self.controler.game_type == 1:
-            move_button = QPushButton("Move")
-            move_button.clicked.connect(self.playerVSIA)            
-        elif self.controler.game_type == 2:
-            move_button = QPushButton("Move")
-            move_button.clicked.connect(self.userMove)
-        elif self.controler.game_type == 3:
-            move_button = QPushButton("Simulate")
-            move_button.clicked.connect(self.IAIA2)            
-        self.bshow_moves = QPushButton("Show moves (delete this button)")        
-        self.bshow_moves.clicked.connect(self.show_moves)        
-        layout.addWidget(piece_label)
-        layout.addWidget(self.piece)
-        layout.addWidget(movement_label)        
-        layout.addWidget(self.movement)
-        layout.addWidget(move_button)
-        layout.addWidget(valid_moves_label)
-        layout.addWidget(self.valid_moves)
-        layout.addWidget(self.bshow_moves)
-        self.setLayout(layout)
-        if self.controler.user == 'b':
-            self.IA_move()
-            self.controler.refreshAll()
-        else:
-            self.show_moves()
-        
-    def playerVSIA(self):                
-        piece = self.piece.text()
-        movement = self.movement.text()
-        self.enemy_moves = self.controler.send_U_move(piece,\
-                              movement, self.valid_movements)
-        #self.controler.send_who_plays()
-        go = self.refresh()
-        if go:            
-            self.IA_move()  
-            self.controler.refreshAll()
-        else:
-            self.controler.refreshAll()
-                
-    def IA_move(self):
-        self.show_moves_IA()
-        self.enemy_moves = self.controler.send_IA_move\
-            (self.valid_movements, self.enemy_moves)
-    
-    def userMove(self):
-        piece = self.piece.text()
-        movement = self.movement.text()
-        self.enemy_moves = self.controler.send_U_move(piece,\
-                              movement, self.valid_movements)
-        #self.controler.send_who_plays()
-        go = self.controler.refreshAll()
             
-    def IAIA(self): 
-        i = 0
-        go = True
-        while go and i < 10: 
-            go = self.refresh()
-            if go:
-                self.IA_move()            
-                self.controler.refreshAll()
-            else:
-                self.controler.refreshAll()
-            i += 1
-            
-    def IAIA2(self):                  
-        go = self.refresh()
-        if go:
-            self.IA_move()            
-            self.controler.refreshAll()
-        else:
-            self.controler.refreshAll()            
-        
-    def refresh(self):
-        king = self.controler.give_who_plays()  
-        self.show_moves()
-        if not self.controler.give_game_state(self.valid_movements):                
-            return True
-        else:            
-            self.controler.give_final_result(self.enemy_moves,king)
-            return False
-    
-    def show_moves(self):
-        self.valid_movements = self.controler.give_valid_moves()
-        self.valid_moves.setPlainText(\
-                      inter_fun.moves_to_string(self.valid_movements))  
-    
-    def show_moves_IA(self):
-        self.valid_movements = self.controler.give_valid_moves()
-        
-        
-        
-        
-
 class ChessBoard(QWidget):
     
     def __init__(self, parent, controler):
         super().__init__(parent)        
         self.controler = controler 
         self.controler.addClient(self)
+        
         self.layout = QGridLayout()  
         self.board()        
         self.board_pieces = ChessPieces(self,controler,self.layout)        
+    
+    def square_clicked(self):
+        piece = self.sender()
+        self.controler.make_move = True
+        self.controler.clicked_piece(piece)
+        
+        
+    def move(self):
+        case = self.sender()
+        self.controler.user_move([case.x,case.j]) 
+        
         
     def board(self): 
-        white = QPixmap(50, 50)
+        white = QPixmap(73,73)
         white.fill(QColor(Qt.white))
-        black = QPixmap(50, 50)
-        black.fill(QColor(160,82,45))
+        black = QPixmap(73,73)
+        black.fill(QColor(160,82,45))     
+        pos_color = QPixmap(73,73)
+        pos_color.fill(QColor(131,111,255)) 
         for i in range(8):
-            for j in range(8):
+            for j in range(8):                
                 if (i + j) % 2 == 0:
-                    square = QLabel()
+                    square = ClickableLabel() 
+                    square.clicked.connect(self.square_clicked)             
                     square.setPixmap(white)
+                    square.x = -1
+                    square.j = -1
+                    square.type = 's'
                     self.layout.addWidget(square, i, j)
                 else:
-                    square = QLabel()             
-                    square.setPixmap(black)                    
-                    self.layout.addWidget(square, i, j)
-        self.setLayout(self.layout)
-         
+                    square = ClickableLabel() 
+                    square.clicked.connect(self.square_clicked)                  
+                    square.setPixmap(black)  
+                    square.x = -1
+                    square.j = -1
+                    square.type = 's'
+                    self.layout.addWidget(square, i, j)                    
+                for pos in self.controler.selected_moves_geo:
+                    square = ClickableLabel()            
+                    square.clicked.connect(self.move)                 
+                    square.setPixmap(pos_color)
+                    square.j = pos[1]
+                    square.x = pos[0]
+                    square.type = 's'
+                    self.layout.addWidget(square, 7-pos[1], pos[0])
+        self.setLayout(self.layout)  
+        
     def refresh(self):
         self.board()
         #self.board_pieces = ChessPieces(self,self.controler,self.layout)
@@ -178,10 +96,19 @@ class ChessPieces(QWidget):
         self.layout = layout
         self.pieces()
         
-    def piece_clicked(self):
-        piece = self.sender()
-        self.controler.piece_clicked(piece)
-        print("clicked:", piece.x, piece.j)
+    def piece_clicked(self):          
+        piece = self.sender() 
+        if self.controler.make_move == False:
+            self.controler.clicked_piece(piece)
+        else:
+            if coordinates.reconvert_to_alg([piece.j,7-piece.x]) in \
+                self.controler.selected_moves_alg:                    
+                    self.controler.user_move([piece.j,7-piece.x])
+            else:
+                self.controler.make_move = False
+                self.controler.clicked_piece(piece)
+        
+            
         
     def pieces(self):        
         piece_map = self.controler.give_map() 
@@ -191,12 +118,13 @@ class ChessPieces(QWidget):
                 j = 0
                 for y in l:
                     if y is not None:
-                        piece = ClickableLabel()                  
+                        piece = ClickableLabel()
                         piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
-                        piece.setPixmap(piece_type.scaled(50, 50))
+                        piece.setPixmap(piece_type.scaled(73,73))
                         piece.x = x
                         piece.j = j
+                        piece.type = 'p'
                         self.layout.addWidget(piece, x, j)
                     j += 1
         else:
@@ -208,9 +136,10 @@ class ChessPieces(QWidget):
                         piece = ClickableLabel()                  
                         piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
-                        piece.setPixmap(piece_type.scaled(50, 50))
+                        piece.setPixmap(piece_type.scaled(73,73))
                         piece.x = x
-                        piece.j = j                  
+                        piece.j = j   
+                        piece.type = 'p'
                         self.layout.addWidget(piece, x, j)
                     j += 1
                     
@@ -224,10 +153,8 @@ class chessUI(QWidget):
         super().__init__(parent)
         vlayout = QVBoxLayout()
         hlayout = QHBoxLayout()
-        self.chess_board = ChessBoard(self, controler)
-        self.chess_movement = ChessMovement(self, controler)        
-        hlayout.addWidget(self.chess_board,0)
-        hlayout.addWidget(self.chess_movement,1)        
+        self.chess_board = ChessBoard(self, controler)                
+        hlayout.addWidget(self.chess_board,0)       
         vlayout.addLayout(hlayout,1)
         self.setLayout(vlayout)
 
@@ -241,7 +168,7 @@ class MainWindow(QMainWindow):
         status_bar = QStatusBar()
         self.setStatusBar(status_bar)
         self.controler = controler
-        status_bar.showMessage('Xadrez version 2.0')         
+        status_bar.showMessage('Xadrez version 3.0')         
         self.game_type = QComboBox()
         self.game_type.addItems(["Player vs IA","Player vs Player",\
                                  "IA vs IA"])

@@ -144,13 +144,12 @@ class pawn(pieces.pieces):
                 if board_map[y_new][x] is None:
                     possible_move = coordinates.reconvert_to_alg([x,y_new])        
                     l.append(possible_move)
-                diagonal_moves = self.diags_possible(board_map) 
-                
+                diagonal_moves = self.diags_possible(board_map)                
                 for diag in diagonal_moves:
                     l.append(diag)
             if y == 1 :
                 y_new = y + 2
-                if board_map[y_new][x] is None:
+                if (board_map[y_new-1][x] is None) and (board_map[y_new][x] is None):
                     possible_move = coordinates.reconvert_to_alg([x,y_new])        
                     l.append(possible_move)
         else:
@@ -159,14 +158,12 @@ class pawn(pieces.pieces):
                 if board_map[y_new][x] is None:
                     possible_move = coordinates.reconvert_to_alg([x,y_new])        
                     l.append(possible_move)
-                diagonal_moves = self.diags_possible(board_map) 
-                
+                diagonal_moves = self.diags_possible(board_map)                 
                 for diag in diagonal_moves:
-                    l.append(diag)
-            
+                    l.append(diag)            
             if y == 6:
                 y_new = y - 2
-                if board_map[y_new][x] is None:
+                if board_map[y_new][x] is None and board_map[y_new+1][x] is None:
                     possible_move = coordinates.reconvert_to_alg([x,y_new])        
                     l.append(possible_move)
                     

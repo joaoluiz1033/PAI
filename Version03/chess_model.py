@@ -447,8 +447,8 @@ class Board():
         return l_valid_moves
     
     
-    def move_User(self,l_possible_moves,p_number,m_mov):
-        return chMV.move_piece_view(self, l_possible_moves, p_number, m_mov)
+    def move_User(self,l_possible_moves,piece,movement):
+        return chMV.move_piece_view(self, l_possible_moves, piece, movement)
     
     def move_IA(self, level, l_possible_moves, l_enemy_moves):
         return chMV.moveIA_view(self,level,l_possible_moves,l_enemy_moves)        

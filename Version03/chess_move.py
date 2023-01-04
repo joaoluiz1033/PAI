@@ -4,6 +4,12 @@ import coordinates
 import pdb
 import copy
 
+def debug_trace():
+    from PyQt5.QtCore import pyqtRemoveInputHook
+    from pdb import set_trace
+    pyqtRemoveInputHook()
+    set_trace()
+
 def move_conquerIA(board,piece,movement,l_possible_moves):
     a = False       
     if chMD.is_empty(l_possible_moves):
@@ -74,8 +80,9 @@ def move_conquerIA(board,piece,movement,l_possible_moves):
         else:
             return [l_possible_moves,score_piece_removed]
 
-def move_piece_view(board,l_possible_moves,p_number,m_mov):
-    a = False       
+def move_piece_view(board,l_possible_moves,piece,movement):
+    a = False    
+    eliminated = False
     if chMD.is_empty(l_possible_moves):
         return l_possible_moves
     else:            
@@ -88,35 +95,29 @@ def move_piece_view(board,l_possible_moves,p_number,m_mov):
             pieces_board = board.blacks_in_board
             enemies_board = board.whites_in_board
             king = board.b_king
-            add = -1                
-        valid = False
-        while not valid:                
-            l = p_number   
-            l = int(l)
-            idx_pawn = l_possible_moves[l]
-            piece = l_possible_moves[l][0]
-            if len(l_possible_moves[l][1]) > 0:
-                valid = True
-            if valid == False:
-                return                            
-        movement = m_mov     
+            add = -1
+        for elem in l_possible_moves:
+            if elem[0] == piece:
+                idx_pawn = l_possible_moves.index(elem)
+                l = copy.deepcopy(l_possible_moves[idx_pawn])    
         movement_xy = coordinates.convert_to_coordinate(movement)
         x = movement_xy [0]
         y = movement_xy [1]            
         old_xy = coordinates.convert_to_coordinate(piece.pos_alg)
         old_y = old_xy[1]
         old_x = old_xy[0]                        
-        if piece in pieces_board:                               
+        if piece in pieces_board:                                   
             if board.board_map[y][x] is not None:                    
                 if board.board_map[y][x].name[1] == 'k':
                     return [] 
                 try:
                     enemies_board.remove(board.board_map[y][x])
+                    eliminated = True
                 except:
-                    pdb.set_trace()                    
+                    debug_trace()                    
             else:
                 if piece.name[1] == 'p':
-                    if abs(old_x - x) != 0:                            
+                    if abs(old_x - x) != 0 and not eliminated:                            
                         enemies_board.remove(board.board_map[y-add][x]) 
                 elif  piece.name[1] == 'k' and abs(x - old_x) == 2:
                     if x > old_x:
@@ -131,7 +132,6 @@ def move_piece_view(board,l_possible_moves,p_number,m_mov):
             pieces_board[idx].pos_alg = movement
             piece.history_mov.append(movement)                
             board.last_movement = movement
-            l_possible_moves[l][1].remove(movement)
             if piece.name[1] == 'k':
                 king.pos_alg = movement          
             if piece.name[1] == 'p':                   

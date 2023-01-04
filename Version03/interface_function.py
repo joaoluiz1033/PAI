@@ -1,6 +1,8 @@
 import sys
 import pdb
 
+import coordinates
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -41,7 +43,7 @@ def moves_to_string(l_valid_moves):
         s = s + str(i) + " -> " + str(x[0]) +":" + str(x[1])+'\n'
         i += 1
     return s
-    
+
 if __name__ == "__main__":
     y ='wp'
     p = add_piece(y)

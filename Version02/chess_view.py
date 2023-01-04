@@ -76,6 +76,7 @@ class ChessMovement(QWidget):
                 
     def IA_move(self):
         self.show_moves_IA()
+        #self.valid_movements = self.controler.give_valid_moves()
         self.enemy_moves = self.controler.send_IA_move\
             (self.valid_movements, self.enemy_moves)
     

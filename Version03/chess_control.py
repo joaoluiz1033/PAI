@@ -2,6 +2,7 @@ import sys
 import chess_model as ch
 import pdb
 
+import coordinates
 
 class ControlerBase():
     
@@ -27,11 +28,15 @@ class Controler(ControlerBase):
         self.server = 1
         self.move_history = []
         self.IA2_level = 1
+        self.selected_moves_alg = []
+        self.selected_moves_geo = []
+        self.piece = []
+        self.make_move = False
         
     def give_valid_moves(self):
-        l_possible_moves = self.board.possible_moves()            
-        l_valid_moves = self.board.simulate_check(l_possible_moves)        
-        return l_valid_moves
+        self.l_possible_moves = self.board.possible_moves()            
+        self.l_valid_moves = self.board.simulate_check(self.l_possible_moves)        
+        return self.l_valid_moves
     
     def give_map(self):
         return self.board.board_map
@@ -43,14 +48,14 @@ class Controler(ControlerBase):
     def give_who_plays(self): 
         return self.board.who_plays()
     
-    def give_game_state(self,l_valid_moves):
+    def give_game_state(self):
         end_game = False
-        if ch.is_empty(l_valid_moves):                                
+        if ch.is_empty(self.l_valid_moves):                                
             end_game = True
         return end_game
     
-    def give_final_result(self,l_enemy_moves,king):        
-        if king.is_checked(l_enemy_moves):
+    def give_final_result(self,king):        
+        if king.is_checked(self.l_enemy_moves):
             print(f"Check Mate: {king}")
         else:                    
             print(f"{self.board.who_plays} cannot move")
@@ -65,21 +70,52 @@ class Controler(ControlerBase):
     def send_who_plays(self):
         self.board.change_who_plays()
         
-    def send_U_move(self, piece, movement,l_possible_moves):
-        l_enemy_moves = self.board.move_User(l_possible_moves,piece,movement)
-        l_enemy_moves = self.board.simulate_check(l_enemy_moves)
-        self.board.change_who_plays()        
-        return l_enemy_moves
-    
-    def send_IA_move(self,l_possible_moves,l_enemy_moves):
-        l_enemy_moves = self.board.move_IA(self.IA_level,l_possible_moves,\
-                                        l_enemy_moves)
-        l_enemy_moves = self.board.simulate_check(l_enemy_moves)
+    def send_U_move(self, piece, movement):
+        self.l_enemy_moves = self.board.move_User(self.l_possible_moves,piece,movement)
+        self.l_enemy_moves = self.board.simulate_check(self.l_enemy_moves)
         self.board.change_who_plays()
-        return l_enemy_moves
+        return self.l_enemy_moves
+    
+    def send_IA_move(self):
+        self.l_enemy_moves = self.board.move_IA(self.IA_level,self.l_possible_moves,\
+                                        self.l_enemy_moves)
+        self.l_enemy_moves = self.board.simulate_check(self.l_enemy_moves)
+        self.board.change_who_plays()
+        return self.l_enemy_moves
     
     def clicked_piece(self,piece):
-        return [piece.x,piece.j]
+        self.selected_moves_alg = []
+        self.selected_moves_geo = []
+        m = self.give_map()
+        if piece.type == 'p':
+            p = m[7-piece.x][piece.j]
+            self.l_valid_moves = self.give_valid_moves()
+            for pair in self.l_valid_moves:
+                if p == pair[0]:
+                    self.piece = pair[0]
+                    for move in pair[1]:
+                        self.selected_moves_alg.append(move)
+                        self.selected_moves_geo.append(coordinates.\
+                            convert_to_coordinate(move))
+        self.make_move = True
+        self.refreshAll()
+    
+    def user_move(self,pos):
+        movement = coordinates.reconvert_to_alg(pos)
+        self.valid_movements = self.give_valid_moves()
+        self.l_enemy_moves = self.send_U_move(self.piece,movement) 
+        king = self.give_who_plays()  
+        self.valid_movements = self.give_valid_moves()        
+        if not self.give_game_state():                
+            self.valid_movements = self.give_valid_moves()
+            self.l_enemy_moves = self.send_IA_move()            
+        else:            
+            self.give_final_result(king)
+        self.selected_moves_alg = []
+        self.selected_moves_geo = []
+        self.make_move = False
+        self.refreshAll()   
+        
 
 if __name__ == "__main__":
     pass
