@@ -4,6 +4,7 @@ import time
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtTest import *
 
 import interface_function as inter_fun
 import chess_ql as ql
@@ -25,13 +26,51 @@ class ClickableLabel(QLabel):
         if event.button() == Qt.LeftButton:
             self.clicked.emit()
             
+class ChessTimer(QWidget):
+    
+    def __init__(self,parent,controler):
+        super().__init__(parent) 
+        self.controler = controler 
+        self.controler.addClient(self)
+        self.listFile=QListWidget()
+        self.label=QLabel('Label')
+        layout=QGridLayout()
+        self.timer=QTimer()
+        self.timer.timeout.connect(self.showTime)
+        self.time = QTime(0, 10, 0)
+        layout.addWidget(self.label,0,0,1,2)
+        self.setLayout(layout)
+        self.showTime()
+        self.startTimer()
+        
+    def showTime(self):        
+        self.time = self.time.addSecs(-1)
+        timeDisplay=self.time.toString('mm:ss')
+        self.label.setText(timeDisplay)
+
+    def startTimer(self):
+        self.timer.start(1000)
+
+    def endTimer(self):
+        self.timer.stop()
+        
+    def refresh(self):
+        if self.controler.begin:
+            print("aqui")
+            self.startTimer()
+            self.showTime()
+            self.controler.begin = False
+        if self.controler.stop:
+            self.endTimer()
+            self.showTime()
+            self.controler.stop = True
+            
 class ChessBoard(QWidget):
     
     def __init__(self, parent, controler):
         super().__init__(parent)        
         self.controler = controler 
-        self.controler.addClient(self)
-        
+        self.controler.addClient(self)        
         self.layout = QGridLayout()  
         self.board()        
         self.board_pieces = ChessPieces(self,controler,self.layout)
@@ -72,7 +111,8 @@ class ChessBoard(QWidget):
                     square.x = -1
                     square.j = -1
                     square.type = 's'
-                    self.layout.addWidget(square, i, j)                    
+                    self.layout.addWidget(square, i, j)
+                
                 for pos in self.controler.selected_moves_geo:
                     square = ClickableLabel()            
                     square.clicked.connect(self.move)                 
@@ -84,12 +124,10 @@ class ChessBoard(QWidget):
                         self.layout.addWidget(square, 7-pos[1], pos[0])
                     else:
                         self.layout.addWidget(square, pos[1], pos[0])
-        self.setLayout(self.layout)  
+        self.setLayout(self.layout)    
         
     def refresh(self):
-        self.board()
-        #self.board_pieces = ChessPieces(self,self.controler,self.layout)
- 
+        self.board() 
         
 class ChessPieces(QWidget):
     
@@ -112,8 +150,7 @@ class ChessPieces(QWidget):
             else:
                 self.controler.make_move = False
                 self.controler.clicked_piece(piece)            
-        if self.controler.game_type == 3:
-            self.refresh()
+  
             
     def pieces(self):        
         piece_map = self.controler.give_map() 
@@ -150,19 +187,18 @@ class ChessPieces(QWidget):
                     
     def refresh(self):
         self.pieces()
-        if self.controler.game_type == 3:
-            pass
-            #self.controler.game()
-    
-    
+
+
 class chessUI(QWidget):
 
     def __init__(self, parent, controler):
         super().__init__(parent)
         vlayout = QVBoxLayout()
         hlayout = QHBoxLayout()
-        self.chess_board = ChessBoard(self, controler)                
-        hlayout.addWidget(self.chess_board,0)       
+        self.chess_board = ChessBoard(self, controler) 
+        self.chess_timer = ChessTimer(self,controler)               
+        hlayout.addWidget(self.chess_board,0) 
+        hlayout.addWidget(self.chess_timer,1)
         vlayout.addLayout(hlayout,1)
         self.setLayout(vlayout)
 
@@ -176,7 +212,7 @@ class MainWindow(QMainWindow):
         status_bar = QStatusBar()
         self.setStatusBar(status_bar)
         self.controler = controler
-        status_bar.showMessage('Xadrez version 3.0')         
+        status_bar.showMessage('Xadrez version 4.0')         
         self.game_type = QComboBox()
         self.game_type.addItems(["Player vs IA","Player vs Player",\
                                  "IA vs IA"])

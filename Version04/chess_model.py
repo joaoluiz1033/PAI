@@ -230,7 +230,7 @@ class Board():
             self.who_plays = 'b'
         else:
             self.who_plays = 'w'
-        return
+        return self.who_plays
     
     def move_choose(self,l_possible_moves):        
         a = False       
