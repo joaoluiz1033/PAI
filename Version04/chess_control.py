@@ -40,6 +40,7 @@ class Controler(ControlerBase):
         self.make_move = False
         self.l_enemy_moves = []
         self.refresh_functions = False
+        self.timeMAX = 1
         self.stop = False
         self.begin = True
    
@@ -162,6 +163,23 @@ class Controler(ControlerBase):
         self.stop = False
         self.refreshAll()
         return self.give_game_state()
+    
+    def user_vs_user(self):
+        movement = coordinates.reconvert_to_alg(self.pos)
+        self.l_valid_moves = self.give_valid_moves()
+        self.l_enemy_moves = self.send_U_move(self.piece,movement)
+        self.stop = True
+        self.begin = False
+        king = self.give_who_plays()  
+        self.l_valid_moves = self.give_valid_moves()        
+        if not self.give_game_state():
+            pass            
+        else:            
+            self.give_final_result(king)
+        self.selected_moves_alg = []
+        self.selected_moves_geo = []
+        self.make_move = False
+        self.refreshAll() 
                 
     def game(self):
         if self.game_type == 1:

@@ -32,38 +32,68 @@ class ChessTimer(QWidget):
         super().__init__(parent) 
         self.controler = controler 
         self.controler.addClient(self)
-        self.listFile=QListWidget()
-        self.label=QLabel('Label')
+        self.label = QLabel('Label')
         layout=QGridLayout()
-        self.timer=QTimer()
+        self.timer = QTimer()
         self.timer.timeout.connect(self.showTime)
-        self.time = QTime(0, 10, 0)
-        layout.addWidget(self.label,0,0,1,2)
-        self.setLayout(layout)
-        self.showTime()
+        self.time = QTime(0, self.controler.timeMAX, 0)
+        layout.addWidget(self.label)  
+        if self.controler.game_type == 2:
+            self.label2 = QLabel('Label2')
+            self.timer2 = QTimer()
+            self.timer2.timeout.connect(self.showTime2)
+            self.time2 = QTime(0, self.controler.timeMAX, 0)
+            layout.addWidget(self.label2)          
         self.startTimer()
+        self.showTime()   
+        self.showTime2()         
+        self.setLayout(layout)
         
     def showTime(self):        
         self.time = self.time.addSecs(-1)
-        timeDisplay=self.time.toString('mm:ss')
+        timeDisplay = self.time.toString('mm:ss')
         self.label.setText(timeDisplay)
+            
+    def showTime2(self):
+        self.time2 = self.time2.addSecs(-1)
+        timeDisplay2 = self.time2.toString('mm:ss')
+        self.label2.setText(timeDisplay2)
 
     def startTimer(self):
         self.timer.start(1000)
 
     def endTimer(self):
         self.timer.stop()
+    
+    def startTimer2(self):
+        self.timer2.start(1000)
         
+    def endTimer2(self):
+        self.timer2.stop()        
+    
     def refresh(self):
-        if self.controler.begin:
-            print("aqui")
-            self.startTimer()
-            self.showTime()
-            self.controler.begin = False
-        if self.controler.stop:
-            self.endTimer()
-            self.showTime()
-            self.controler.stop = True
+        if self.controler.game_type == 1:
+            if self.controler.begin:
+                self.startTimer()
+                self.showTime()
+                self.controler.begin = False
+            if self.controler.stop:
+                self.endTimer()
+                self.showTime()
+                self.controler.stop = True
+        if self.controler.game_type == 2:
+            if self.controler.begin:
+                self.startTimer()
+                self.endTimer2()
+                self.showTime()
+                self.showTime2()
+                self.controler.begin = False
+            if self.controler.stop:
+                self.endTimer()
+                self.startTimer2()
+                self.showTime()
+                self.showTime2()
+                self.controler.stop = True
             
 class ChessBoard(QWidget):
     
@@ -195,10 +225,12 @@ class chessUI(QWidget):
         super().__init__(parent)
         vlayout = QVBoxLayout()
         hlayout = QHBoxLayout()
-        self.chess_board = ChessBoard(self, controler) 
-        self.chess_timer = ChessTimer(self,controler)               
+        self.chess_board = ChessBoard(self, controler)         
+        self.chess_timer = ChessTimer(self,controler)
+        #self.chess_timerb = ChessTimer(self,controler)          
         hlayout.addWidget(self.chess_board,0) 
         hlayout.addWidget(self.chess_timer,1)
+        #hlayout.addWidget(self.chess_timerb,1)
         vlayout.addLayout(hlayout,1)
         self.setLayout(vlayout)
 
@@ -264,13 +296,21 @@ class MainWindow(QMainWindow):
         User_team_label = QLabel("User's team")
         self.User_team.currentTextChanged.connect(\
                                               self.IA_vs_player_team)
+        self.time_max = QComboBox()
+        self.time_max.addItems(['1','3','5','10','30'])
+        self.time_max.currentTextChanged.connect(\
+                                              self.change_time)
+        time_max_label = QLabel("Game Time (minutes)")
         self.layout.addWidget(IA_level_label)
         self.layout.addWidget(self.IA_level)
         self.layout.addWidget(User_team_label)
         self.layout.addWidget(self.User_team)
+        self.layout.addWidget(time_max_label)
+        self.layout.addWidget(self.time_max)
         self.start_button.setParent(None)
         self.start_button.clicked.connect(self.start_game)
-        self.layout.addWidget(self.start_button)        
+        self.layout.addWidget(self.start_button) 
+        
         
     def IA_vs_player_level(self):
         level = self.IA_level.currentText()        
@@ -288,7 +328,10 @@ class MainWindow(QMainWindow):
         if user == "White":
             self.controler.user = 'w'
         else:
-            self.controler.user = "b"        
+            self.controler.user = "b"  
+    
+    def change_time(self):
+        self.controler.timeMAX = int(self.time_max.currentText())
     
     def player_vs_player(self):
         self.type_of_server = QComboBox()
@@ -297,7 +340,14 @@ class MainWindow(QMainWindow):
         self.type_of_server.currentTextChanged.connect(\
                                              self.player_server)
         self.layout.addWidget( type_of_server_label)
-        self.layout.addWidget(self. type_of_server)        
+        self.layout.addWidget(self. type_of_server)
+        self.time_max = QComboBox()
+        self.time_max.addItems(['1','3','5','10','30'])
+        self.time_max.currentTextChanged.connect(\
+                                              self.change_time)
+        time_max_label = QLabel("Game Time (minutes)")
+        self.layout.addWidget(time_max_label)
+        self.layout.addWidget(self.time_max)
         self.start_button.setParent(None)
         self.start_button.clicked.connect(self.start_game)
         self.layout.addWidget(self.start_button)
