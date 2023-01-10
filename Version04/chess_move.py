@@ -80,9 +80,12 @@ def move_conquerIA(board,piece,movement,l_possible_moves):
         else:
             return [l_possible_moves,score_piece_removed]
 
-def move_piece_view(board,l_possible_moves,piece,movement):
+def move_piece_view(board,l_possible_moves,piece,movement):    
     a = False    
     eliminated = False
+    roque1 = False
+    roque2 = False
+    constant = ''
     if chMD.is_empty(l_possible_moves):
         return l_possible_moves
     else:            
@@ -118,13 +121,16 @@ def move_piece_view(board,l_possible_moves,piece,movement):
             else:
                 if piece.name[1] == 'p':
                     if abs(old_x - x) != 0 and not eliminated:                            
-                        enemies_board.remove(board.board_map[y-add][x]) 
+                        enemies_board.remove(board.board_map[y-add][x])
+                        eliminated = True
                 elif  piece.name[1] == 'k' and abs(x - old_x) == 2:
                     if x > old_x:
+                        roque1 = True
                         idx_rook = board.find_rook(pieces_board, 1)
                         rook_pos = coordinates.reconvert_to_alg([x-1,y])
                         pieces_board[idx_rook].pos_alg = rook_pos
                     else:
+                        roque2 = True
                         idx_rook = board.find_rook(pieces_board, -1) 
                         rook_pos = coordinates.reconvert_to_alg([x+1,y])
                         pieces_board[idx_rook].pos_alg = rook_pos
@@ -142,14 +148,25 @@ def move_piece_view(board,l_possible_moves,piece,movement):
                 elif abs(old_y - y) == 2:                        
                     board.register_en_passant(x,y,piece,add,enemies_board)
         board.current_board()
-        l_possible_moves = board.possible_moves()           
+        l_possible_moves = board.possible_moves()     
+        if eliminated:
+            constant = 'X'            
+        elif roque1:
+            constant = 'O-O'
+        elif roque2:
+            constant = 'O-O-O'
+        board.history.append(piece.name+movement+constant)
         if a:
             return []
         else:
             return l_possible_moves
         
 def moveIA_view(board,level,l_possible_moves,l_enemy_moves):
-    a = False   
+    a = False
+    eliminated = False
+    roque1 = False
+    roque2 = False
+    constant = ''
     if chMD.is_empty(l_possible_moves):
         return l_possible_moves
     else:            
@@ -178,17 +195,21 @@ def moveIA_view(board,level,l_possible_moves,l_enemy_moves):
             if board.board_map[y][x] is not None:                    
                 if board.board_map[y][x].name[1] == 'k':
                     return []  
-                enemies_board.remove(board.board_map[y][x])                    
+                enemies_board.remove(board.board_map[y][x]) 
+                eliminate = True                   
             else:
                 if piece.name[1] == 'p':
                     if abs(old_x - x) != 0:                            
-                        enemies_board.remove(board.board_map[y-add][x]) 
+                        enemies_board.remove(board.board_map[y-add][x])
+                        eliminated = True
                 elif  piece.name[1] == 'k' and abs(x - old_x) == 2:
                     if x > old_x:
+                        roque1 = True
                         idx_rook = board.find_rook(pieces_board, 1)
                         rook_pos = coordinates.reconvert_to_alg([x-1,y])
                         pieces_board[idx_rook].pos_alg = rook_pos
                     else:
+                        roque2 = True
                         idx_rook = board.find_rook(pieces_board, -1) 
                         rook_pos = coordinates.reconvert_to_alg([x+1,y])
                         pieces_board[idx_rook].pos_alg = rook_pos
@@ -208,6 +229,13 @@ def moveIA_view(board,level,l_possible_moves,l_enemy_moves):
                     board.register_en_passant(x,y,piece,add,enemies_board)
         board.current_board()
         l_possible_moves = board.possible_moves() 
+        if eliminated:
+            constant = 'X'            
+        elif roque1:
+            constant = 'O-O'
+        elif roque2:
+            constant = 'O-O-O'        
+        board.history.append(piece.name+movement+constant)        
         if a:
             return []
         else:

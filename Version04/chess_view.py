@@ -76,7 +76,6 @@ class ChessTimer(QWidget):
             self.endTimer2()
             self.showTime()
         if self.controler.turn == 'b':
-            print("aqui")
             self.endTimer()
             self.startTimer2()
             self.showTime2()

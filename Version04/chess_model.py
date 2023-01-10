@@ -17,15 +17,13 @@ import coordinates
 import chess_IA as chIA
 import chess_move as chMV
 
+def debug_trace():
+    from PyQt5.QtCore import pyqtRemoveInputHook
+    from pdb import set_trace
+    pyqtRemoveInputHook()
+    set_trace()
 
-def is_empty(l):    
-    '''     
-    Parameters
-    ----------
-    l : list containin a piece and its possible movements
-    Returns True is empty 
-    -------   
-    '''
+def is_empty(l): 
     i = 0
     if len(l) == 0 or l is None:
         return True
@@ -39,6 +37,7 @@ def is_empty(l):
             return True
         else: 
             return False       
+
 
 def convert_notation(move): 
     move=move.split('_')
@@ -377,7 +376,7 @@ class Board():
             return True
     
     def simulate_check(self,l_possible_moves):        
-        valid_list = []     
+        valid_list = []
         for pair in l_possible_moves:
             piece = pair[0]
             piece_movements = pair[1]
@@ -456,10 +455,10 @@ class Board():
             
                        
 if __name__ == "__main__":
-    bd = Board()    
-    bd.game()
-    bd.prt()
+    l = ['wpe4', 'bpa6', 'wbc4', 'bpa5', 'wqf3', 'bpa4', 'wqf7']   
+    l_new = []
+    print(l)
     
-    
+     
     
 

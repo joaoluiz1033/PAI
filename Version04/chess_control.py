@@ -61,6 +61,7 @@ class Controler(ControlerBase):
         end_game = False
         if ch.is_empty(self.l_valid_moves):                                
             end_game = True
+            print(self.board.history)
         return end_game
     
     def give_final_result(self,king):        
