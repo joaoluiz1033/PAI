@@ -37,13 +37,12 @@ class ChessTimer(QWidget):
         self.timer = QTimer()
         self.timer.timeout.connect(self.showTime)
         self.time = QTime(0, self.controler.timeMAX, 0)
-        layout.addWidget(self.label)  
-        if self.controler.game_type == 2:
-            self.label2 = QLabel('Label2')
-            self.timer2 = QTimer()
-            self.timer2.timeout.connect(self.showTime2)
-            self.time2 = QTime(0, self.controler.timeMAX, 0)
-            layout.addWidget(self.label2)          
+        self.label2 = QLabel('Label2')
+        self.timer2 = QTimer()
+        self.timer2.timeout.connect(self.showTime2)
+        self.time2 = QTime(0, self.controler.timeMAX, 0)
+        layout.addWidget(self.label)
+        layout.addWidget(self.label2)          
         self.startTimer()
         self.showTime()   
         self.showTime2()         
@@ -71,29 +70,16 @@ class ChessTimer(QWidget):
     def endTimer2(self):
         self.timer2.stop()        
     
-    def refresh(self):
-        if self.controler.game_type == 1:
-            if self.controler.begin:
-                self.startTimer()
-                self.showTime()
-                self.controler.begin = False
-            if self.controler.stop:
-                self.endTimer()
-                self.showTime()
-                self.controler.stop = True
-        if self.controler.game_type == 2:
-            if self.controler.begin:
-                self.startTimer()
-                self.endTimer2()
-                self.showTime()
-                self.showTime2()
-                self.controler.begin = False
-            if self.controler.stop:
-                self.endTimer()
-                self.startTimer2()
-                self.showTime()
-                self.showTime2()
-                self.controler.stop = True
+    def refresh(self):        
+        if self.controler.turn == 'w':
+            self.startTimer()
+            self.endTimer2()
+            self.showTime()
+        if self.controler.turn == 'b':
+            print("aqui")
+            self.endTimer()
+            self.startTimer2()
+            self.showTime2()
             
 class ChessBoard(QWidget):
     
@@ -106,7 +92,7 @@ class ChessBoard(QWidget):
         self.board_pieces = ChessPieces(self,controler,self.layout)
         if self.controler.user == 'b':
             self.controler.IA_initial_move()
-    
+        
     def square_clicked(self):
         piece = self.sender()
         self.controler.make_move = True
@@ -228,8 +214,9 @@ class chessUI(QWidget):
         self.chess_board = ChessBoard(self, controler)         
         self.chess_timer = ChessTimer(self,controler)
         #self.chess_timerb = ChessTimer(self,controler)          
-        hlayout.addWidget(self.chess_board,0) 
-        hlayout.addWidget(self.chess_timer,1)
+        hlayout.addWidget(self.chess_board,0)
+        if controler.game_type == 2:
+            hlayout.addWidget(self.chess_timer,1)
         #hlayout.addWidget(self.chess_timerb,1)
         vlayout.addLayout(hlayout,1)
         self.setLayout(vlayout)

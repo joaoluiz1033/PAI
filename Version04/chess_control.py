@@ -41,8 +41,6 @@ class Controler(ControlerBase):
         self.l_enemy_moves = []
         self.refresh_functions = False
         self.timeMAX = 1
-        self.stop = False
-        self.begin = True
    
     def give_valid_moves(self):
         self.l_possible_moves = self.board.possible_moves()            
@@ -83,7 +81,7 @@ class Controler(ControlerBase):
     def send_U_move(self, piece, movement):
         self.l_enemy_moves = self.board.move_User(self.l_possible_moves,piece,movement)
         self.l_enemy_moves = self.board.simulate_check(self.l_enemy_moves)
-        self.turn = self.board.change_who_plays()
+        self.turn = self.board.change_who_plays()        
         return self.l_enemy_moves
     
     def send_IA_move(self,IA_level):
@@ -143,9 +141,7 @@ class Controler(ControlerBase):
             self.give_final_result(king)
         self.selected_moves_alg = []
         self.selected_moves_geo = []
-        self.make_move = False        
-        self.stop = True
-        self.begin = False
+        self.make_move = False
         self.refreshAll()
         return self.give_game_state()
         
@@ -158,9 +154,7 @@ class Controler(ControlerBase):
             self.give_final_result(king)
         self.selected_moves_alg = []
         self.selected_moves_geo = []
-        self.make_move = False        
-        self.begin = True
-        self.stop = False
+        self.make_move = False
         self.refreshAll()
         return self.give_game_state()
     
@@ -168,8 +162,6 @@ class Controler(ControlerBase):
         movement = coordinates.reconvert_to_alg(self.pos)
         self.l_valid_moves = self.give_valid_moves()
         self.l_enemy_moves = self.send_U_move(self.piece,movement)
-        self.stop = True
-        self.begin = False
         king = self.give_who_plays()  
         self.l_valid_moves = self.give_valid_moves()        
         if not self.give_game_state():
@@ -188,7 +180,6 @@ class Controler(ControlerBase):
             if not game_state:
                 QTest.qWait(250)
                 self.IA_move(self.IA_level)
-            #self.user_vs_IA()
         elif self.game_type == 2:
             self.user_vs_user()
         else:
