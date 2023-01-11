@@ -387,6 +387,7 @@ class MainWindow(QMainWindow):
             self.controler.IA2_level = 4
     
 def main():
+    global app
     app = QApplication([])
     controler = Controler()
     win = MainWindow(controler)  

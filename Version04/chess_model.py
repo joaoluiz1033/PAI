@@ -168,15 +168,12 @@ class Board():
 
         return l_move_poss
     
-    def change_pawn(self, position ,pieces_in_board, pawn_idx,team):    
-        
-        a = team
-        
+    def change_pawn(self, position ,pieces_in_board, pawn_idx,team):        
+        a = team        
         pieces = [q.queen(a+'q', position),n.knight(a+'n',position),b.bishop(a+'b', position),r.rook(a+'r',position)]
-        p = random.choice(pieces)
-        
+        p = random.choice(pieces)        
         pieces_in_board[pawn_idx] = p
-        
+        self.history[-1] += '=Q'        
         return [p,p.check_moves(self.board_map)]
     
     def register_en_passant(self,x,y,piece,add,enemies_board):        
