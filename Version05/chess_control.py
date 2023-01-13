@@ -2,10 +2,17 @@ import sys
 import chess_model as ch
 import pdb
 import time
-
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from PyQt5.QtTest import *
-
 import coordinates
+def debug_trace():
+    from PyQt5.QtCore import pyqtRemoveInputHook
+    from pdb import set_trace
+    pyqtRemoveInputHook()
+    set_trace()
+
 
 class ControlerBase():
     
@@ -41,6 +48,7 @@ class Controler(ControlerBase):
         self.l_enemy_moves = []
         self.refresh_functions = False
         self.timeMAX = 1
+        self.i = 0
    
     def give_valid_moves(self):
         self.l_possible_moves = self.board.possible_moves()            
@@ -61,12 +69,17 @@ class Controler(ControlerBase):
         end_game = False
         if ch.is_empty(self.l_valid_moves):                                
             end_game = True
-            print(self.board.history)
         return end_game
     
     def give_final_result(self,king):        
         if king.is_checked(self.l_enemy_moves):
+            if self.board.history[-1][-1] != '+':
+                self.board.history[-1] = self.board.history[-1] + '#'
+            else:
+                self.board.history[-1] = \
+                    self.board.history[-1].replace("+","#")
             print(f"Check Mate: {king}")
+            print(self.board.history)
         else:                    
             print(f"{self.board.who_plays} cannot move")            
             
@@ -122,8 +135,7 @@ class Controler(ControlerBase):
         self.selected_moves_alg = []
         self.selected_moves_geo = []
         self.make_move = False        
-        self.refreshAll()
-           
+        self.refreshAll()           
         
     def IA_initial_move(self):
         self.l_valid_moves = self.give_valid_moves()
@@ -135,6 +147,8 @@ class Controler(ControlerBase):
         self.l_valid_moves = self.give_valid_moves()
         self.l_enemy_moves = self.send_U_move(self.piece,movement) 
         king = self.give_who_plays()  
+        if king.is_checked(self.l_enemy_moves):
+            self.board.history[-1] = self.board.history[-1] + '+'
         self.l_valid_moves = self.give_valid_moves()        
         if not self.give_game_state():
             pass            
@@ -144,10 +158,9 @@ class Controler(ControlerBase):
         self.selected_moves_geo = []
         self.make_move = False
         self.refreshAll()
-        return self.give_game_state()
         
     def IA_move(self,IA_level):
-        king = self.give_who_plays()  
+        king = self.give_who_plays()
         self.l_valid_moves = self.give_valid_moves()
         if not self.give_game_state():
             self.l_enemy_moves = self.send_IA_move(IA_level)            
@@ -163,7 +176,10 @@ class Controler(ControlerBase):
         movement = coordinates.reconvert_to_alg(self.pos)
         self.l_valid_moves = self.give_valid_moves()
         self.l_enemy_moves = self.send_U_move(self.piece,movement)
-        king = self.give_who_plays()  
+        king = self.give_who_plays()
+        if king.is_checked(self.l_enemy_moves) and \
+            not self.give_game_state():
+            self.board.history[-1] = self.board.history[-1] + '+'
         self.l_valid_moves = self.give_valid_moves()        
         if not self.give_game_state():
             pass            
@@ -172,7 +188,7 @@ class Controler(ControlerBase):
         self.selected_moves_alg = []
         self.selected_moves_geo = []
         self.make_move = False
-        self.refreshAll() 
+        self.refreshAll()
                 
     def game(self):
         if self.game_type == 1:
@@ -184,16 +200,14 @@ class Controler(ControlerBase):
         elif self.game_type == 2:
             self.user_vs_user()
         else:
-            i = 0
+            self.i += 1
             game_state = False
-            while game_state == False and i<250:
+            if not game_state and self.i < 250:            
                 game_state = self.IA_move(self.IA_level)
-                if not game_state:
-                    QTest.qWait(250)
-                    self.IA_move(self.IA2_level)
-                    i += 1
-                    print(i)
-                print(game_state)
+                if not game_state:                    
+                    self.IA_move(self.IA2_level)                                        
+                    
+      
             
 if __name__ == "__main__":
     pass

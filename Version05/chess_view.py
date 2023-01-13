@@ -142,7 +142,11 @@ class ChessBoard(QWidget):
         self.setLayout(self.layout)    
         
     def refresh(self):
+        loop = QEventLoop()
+        QTimer.singleShot(250, loop.quit)
+        loop.exec_()
         self.board() 
+        
         
 class ChessPieces(QWidget):
     
@@ -200,8 +204,9 @@ class ChessPieces(QWidget):
                         self.layout.addWidget(piece, x, j)
                     j += 1
                     
-    def refresh(self):
+    def refresh(self):        
         self.pieces()
+            
 
 
 class chessUI(QWidget):
@@ -387,6 +392,7 @@ class MainWindow(QMainWindow):
             self.controler.IA2_level = 4
     
 def main():
+    global app
     app = QApplication([])
     controler = Controler()
     win = MainWindow(controler)  
