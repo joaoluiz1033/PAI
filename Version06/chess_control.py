@@ -2,16 +2,8 @@ import sys
 import chess_model as ch
 import pdb
 import time
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtTest import *
+
 import coordinates
-def debug_trace():
-    from PyQt5.QtCore import pyqtRemoveInputHook
-    from pdb import set_trace
-    pyqtRemoveInputHook()
-    set_trace()
 
 
 class ControlerBase():
@@ -191,35 +183,36 @@ class Controler(ControlerBase):
         self.refreshAll()
                 
     def game(self):
+        client = self.clients[1]
         if self.game_type == 1:
             if self.turn == self.user:
                 game_state = self.user_move()
             if not game_state:
-                loop = QEventLoop()
-                QTimer.singleShot(250, loop.quit)
-                loop.exec_()
+                client.execute_with_delay(250)
                 self.IA_move(self.IA_level)
         elif self.game_type == 2:
             self.user_vs_user()
             self.i += 1
             print(self.i) 
-        else:
-            # i = 0
-            # game_state = False
-            # while game_state == False and i<100:
-            #     game_state = self.IA_move(self.IA_level)
-            #     if not game_state:
-            #         game_state = self.IA_move(self.IA2_level)
-            #         i += 1
-            #         self.give_map_board()
-            #         print(i)  
-            game_state = self.IA_move(self.IA_level)  
-            if not game_state:
-                game_state = self.IA_move(self.IA2_level) 
-            self.i += 1
-            print(self.i)                                   
-             
-      
+        else:                        
+            i = 0
+            game_state = False
+            while game_state == False and i<100:
+                game_state = self.IA_move(self.IA_level)
+                client.execute_with_delay(250)
+                if not game_state:
+                    game_state = self.IA_move(self.IA2_level)
+                    client.execute_with_delay(250)
+                    i += 1
+                    self.give_map_board()
+                    print(i)  
+            # game_state = self.IA_move(self.IA_level)
+            # client = self.clients[1]
+            # client.execute_with_delay(250)
+            # if not game_state:
+            #     game_state = self.IA_move(self.IA2_level) 
+            # self.i += 1
+            
             
 if __name__ == "__main__":
     pass

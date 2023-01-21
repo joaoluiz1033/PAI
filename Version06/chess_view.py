@@ -19,6 +19,17 @@ def debug_trace():
     set_trace()
 
 
+def clearLayout(self, layout):
+    if layout is not None:
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+            else:
+                self.clearLayout(item.layout())
+                
+
 class ClickableLabel(QLabel):
     
     clicked = pyqtSignal()    
@@ -86,8 +97,8 @@ class ChessBoard(QWidget):
         super().__init__(parent)        
         self.controler = controler 
         self.controler.addClient(self)        
-        self.layout = QGridLayout()  
-        self.board()        
+        self.layout = QGridLayout()
+        self.board()
         self.board_pieces = ChessPieces(self,controler,self.layout)
         if self.controler.user == 'b':
             self.controler.IA_initial_move()
@@ -102,7 +113,7 @@ class ChessBoard(QWidget):
         self.controler.pos = [case.x,case.j]
         self.controler.game()         
         
-    def board(self): 
+    def board(self):
         white = QPixmap(73,73)
         white.fill(QColor(Qt.white))
         black = QPixmap(73,73)
@@ -140,9 +151,18 @@ class ChessBoard(QWidget):
                     else:
                         self.layout.addWidget(square, pos[1], pos[0])
         self.setLayout(self.layout)    
+    
+    def delete_piece(self):
+        for i in reversed(range(self.layout.count())): 
+            self.layout.itemAt(i).widget().setParent(None)
+            if len(self.layout) < 65:
+                break
+        
         
     def refresh(self):
+        self.delete_piece()
         self.board()
+        
         
         
 class ChessPieces(QWidget):
@@ -152,6 +172,7 @@ class ChessPieces(QWidget):
         self.controler = controler
         self.controler.addClient(self)
         self.layout = layout
+        print(len(layout))
         self.pieces()
         
     def piece_clicked(self):         
@@ -168,7 +189,7 @@ class ChessPieces(QWidget):
                 self.controler.clicked_piece(piece)            
   
             
-    def pieces(self):        
+    def pieces(self):
         piece_map = self.controler.give_map() 
         if self.controler.user == 'w':        
             for x in range(8):
@@ -182,7 +203,7 @@ class ChessPieces(QWidget):
                         piece.setPixmap(piece_type.scaled(73,73))
                         piece.x = x
                         piece.j = j
-                        piece.type = 'p'
+                        piece.type = 'p'                        
                         self.layout.addWidget(piece, x, j)
                     j += 1
         else:
@@ -200,20 +221,34 @@ class ChessPieces(QWidget):
                         piece.type = 'p'
                         self.layout.addWidget(piece, x, j)
                     j += 1
-    
 
-    def execute_with_delay(self, func, delay):
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        self.timer.timeout.connect(func)
-        self.timer.start(delay)
+    def delete_piece(self):
+        for i in reversed(range(self.layout.count())): 
+            self.layout.itemAt(i).widget().setParent(None)
+            if len(self.layout) < 65:
+                break
+    
+    def function_void(self):
+        pass
+    
+    def execute_with_delay(self,delay):
+        # self.timer = QTimer()
+        # self.timer.setSingleShot(True)
+        # self.timer.timeout.connect(func)
+        # self.timer.start(delay)
+        loop = QEventLoop()
+        QTimer.singleShot(delay, loop.quit)
+        loop.exec_()
         
-    def refresh(self):        
+    def refresh(self):
         self.pieces()
-        if self.controler.game_type == 3:
-            self.execute_with_delay(\
-                                lambda: self.controler.game(), 1000)
-            
+        # if self.controler.game_type == 3:
+        #     self.controler.game()
+        #     self.execute_with_delay(\
+        #                         lambda: self.controler.game(), 250)
+        # elif self.controler.game_type == 2:
+        #     self.execute_with_delay(\
+        #                         lambda: self.function_void(), 1000)  
 
 
 class chessUI(QWidget):
@@ -222,8 +257,9 @@ class chessUI(QWidget):
         super().__init__(parent)
         vlayout = QVBoxLayout()
         hlayout = QHBoxLayout()
-        self.chess_board = ChessBoard(self, controler)         
-        self.chess_timer = ChessTimer(self,controler)
+        self.chess_board = ChessBoard(self, controler)
+        if controler.game_type == 2 :         
+            self.chess_timer = ChessTimer(self,controler)
         #self.chess_timerb = ChessTimer(self,controler)          
         hlayout.addWidget(self.chess_board,0)
         if controler.game_type == 2:
