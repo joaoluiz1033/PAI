@@ -346,17 +346,17 @@ class MainWindow(QMainWindow):
         User_team_label = QLabel("User's team")
         self.User_team.currentTextChanged.connect(\
                                               self.IA_vs_player_team)
-        self.time_max = QComboBox()
-        self.time_max.addItems(['1','3','5','10','30'])
-        self.time_max.currentTextChanged.connect(\
-                                              self.change_time)
-        time_max_label = QLabel("Game Time (minutes)")
+        self.load = QComboBox()
+        load_label = QLabel("Load a game?")
+        self.load.addItems(['No','Yes'])
+        self.load.currentTextChanged.connect(\
+                                              self.loadFile)
         self.layout.addWidget(IA_level_label)
         self.layout.addWidget(self.IA_level)
         self.layout.addWidget(User_team_label)
-        self.layout.addWidget(self.User_team)
-        self.layout.addWidget(time_max_label)
-        self.layout.addWidget(self.time_max)
+        self.layout.addWidget(self.User_team) 
+        self.layout.addWidget(load_label)
+        self.layout.addWidget(self.load)
         self.start_button.setParent(None)
         self.start_button.clicked.connect(self.start_game)
         self.layout.addWidget(self.start_button) 
@@ -384,30 +384,23 @@ class MainWindow(QMainWindow):
         self.controler.timeMAX = int(self.time_max.currentText())
     
     def player_vs_player(self):
-        self.type_of_server = QComboBox()
-        self.type_of_server.addItems(["Local","Dedicated server"])
-        type_of_server_label = QLabel("Local/Server")
-        self.type_of_server.currentTextChanged.connect(\
-                                             self.player_server)
-        self.layout.addWidget( type_of_server_label)
-        self.layout.addWidget(self. type_of_server)
         self.time_max = QComboBox()
         self.time_max.addItems(['1','3','5','10','30'])
         self.time_max.currentTextChanged.connect(\
                                               self.change_time)
         time_max_label = QLabel("Game Time (minutes)")
+        self.load = QComboBox()
+        load_label = QLabel("Load a game?")
+        self.load.addItems(['No','Yes'])
+        self.load.currentTextChanged.connect(\
+                                              self.loadFile)
         self.layout.addWidget(time_max_label)
         self.layout.addWidget(self.time_max)
+        self.layout.addWidget(load_label)
+        self.layout.addWidget(self.load)
         self.start_button.setParent(None)
         self.start_button.clicked.connect(self.start_game)
-        self.layout.addWidget(self.start_button)
-        
-    def player_server(self):
-        server = self.type_of_server.currentText()
-        if user == "Local":
-            self.controler.server = 1
-        else:
-            self.controler.server = 2
+        self.layout.addWidget(self.start_button)        
     
     def IA_vs_IA(self):
         self.IA1_level = QComboBox()
@@ -449,6 +442,16 @@ class MainWindow(QMainWindow):
             self.controler.IA2_level = 3
         elif level2 == 'Hard':
             self.controler.IA2_level = 4
+    
+    def loadFile(self):
+        if self.load.currentText() == 'Yes':
+            options = QFileDialog.Options()
+            try:
+                fileName, _ = QFileDialog.getOpenFileName(self,\
+                  "QFileDialog.getOpenFileName()", ""," (*.pkl);;Python Files (*.py)", options=options)
+                self.controler.load(fileName)
+            except:
+                pass
     
 def main():
     global app

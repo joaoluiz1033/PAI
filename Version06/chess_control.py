@@ -213,17 +213,22 @@ class Controler(ControlerBase):
             # self.i += 1
             
     def save(self,fileName):   
-        print(fileName)
-        f = open(fileName, 'wb')
-        pickle.dump([self.board.history,self.board], f)
-        f.close()
-
+        try:
+            f = open(fileName, 'wb')
+            pickle.dump([self.board.history,self.board], f)
+            f.close()
+            f = open(fileName, 'rb')
+            obj = pickle.load(f)
+            f.close()    
+        except:
+            pass
+                
+    def load(self,fileName):
         f = open(fileName, 'rb')
         obj = pickle.load(f)
-        f.close()
-        
-        print(obj[0])
-        obj[1].prt()
+        f.close()        
+        self.board = obj[1]
+        self.board.history = obj[0]
         
         
 if __name__ == "__main__":
