@@ -44,7 +44,7 @@ class ChessTimer(QWidget):
         self.controler = controler 
         self.controler.addClient(self)
         self.label = QLabel('Label')
-        layout=QGridLayout()
+        layout=QVBoxLayout()
         self.timer = QTimer()
         self.timer.timeout.connect(self.showTime)
         self.time = QTime(0, self.controler.timeMAX, 0)
@@ -52,8 +52,8 @@ class ChessTimer(QWidget):
         self.timer2 = QTimer()
         self.timer2.timeout.connect(self.showTime2)
         self.time2 = QTime(0, self.controler.timeMAX, 0)
-        layout.addWidget(self.label)
-        layout.addWidget(self.label2)          
+        layout.addWidget(self.label2)
+        layout.addWidget(self.label)                  
         self.startTimer()
         self.showTime()   
         self.showTime2()         
@@ -172,7 +172,6 @@ class ChessPieces(QWidget):
         self.controler = controler
         self.controler.addClient(self)
         self.layout = layout
-        print(len(layout))
         self.pieces()
         
     def piece_clicked(self):         
@@ -250,7 +249,24 @@ class ChessPieces(QWidget):
         #     self.execute_with_delay(\
         #                         lambda: self.function_void(), 1000)  
 
-
+class SaveFile(QWidget):
+    
+    def __init__(self, parent, controler):
+        super().__init__(parent)
+        self.controler = controler
+        self. save_button = QPushButton("Save")
+        self.save_button.clicked.connect(self.save_data)
+        layout = QVBoxLayout()
+        layout.addWidget(self.save_button)
+        self.setLayout(layout)
+        self.hist = []
+        
+    def save_data(self):
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getSaveFileName(self,\
+              "QFileDialog.getOpenFileName()", ""," (*.pkl)", options=options)
+        self.controler.save(fileName)
+    
 class chessUI(QWidget):
 
     def __init__(self, parent, controler):
@@ -260,12 +276,12 @@ class chessUI(QWidget):
         self.chess_board = ChessBoard(self, controler)
         if controler.game_type == 2 :         
             self.chess_timer = ChessTimer(self,controler)
-        #self.chess_timerb = ChessTimer(self,controler)          
+        self.save_options = SaveFile(self,controler)          
         hlayout.addWidget(self.chess_board,0)
         if controler.game_type == 2:
-            hlayout.addWidget(self.chess_timer,1)
-        #hlayout.addWidget(self.chess_timerb,1)
-        vlayout.addLayout(hlayout,1)
+            hlayout.addWidget(self.chess_timer,1)      
+        hlayout.addWidget(self.save_options,1)  
+        vlayout.addLayout(hlayout,1)        
         self.setLayout(vlayout)
 
 

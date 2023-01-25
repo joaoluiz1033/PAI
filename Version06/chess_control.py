@@ -2,6 +2,7 @@ import sys
 import chess_model as ch
 import pdb
 import time
+import pickle
 
 import coordinates
 
@@ -29,8 +30,7 @@ class Controler(ControlerBase):
         self.IA2_level = 1
         self.user = 'w'
         self.turn = 'w'
-        self.server = 1
-        self.move_history = []
+        self.server = 1        
         self.IA2_level = 1
         self.selected_moves_alg = []
         self.selected_moves_geo = []
@@ -193,7 +193,6 @@ class Controler(ControlerBase):
         elif self.game_type == 2:
             self.user_vs_user()
             self.i += 1
-            print(self.i) 
         else:                        
             i = 0
             game_state = False
@@ -213,7 +212,20 @@ class Controler(ControlerBase):
             #     game_state = self.IA_move(self.IA2_level) 
             # self.i += 1
             
-            
+    def save(self,fileName):   
+        print(fileName)
+        f = open(fileName, 'wb')
+        pickle.dump([self.board.history,self.board], f)
+        f.close()
+
+        f = open(fileName, 'rb')
+        obj = pickle.load(f)
+        f.close()
+        
+        print(obj[0])
+        obj[1].prt()
+        
+        
 if __name__ == "__main__":
     pass
       
