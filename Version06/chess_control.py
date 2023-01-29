@@ -40,7 +40,9 @@ class Controler(ControlerBase):
         self.l_enemy_moves = []
         self.refresh_functions = False
         self.timeMAX = 1
-        self.i = 0
+        self.result = False
+        self.string_result = ''
+        
    
     def give_valid_moves(self):
         self.l_possible_moves = self.board.possible_moves()            
@@ -61,6 +63,7 @@ class Controler(ControlerBase):
         end_game = False
         if ch.is_empty(self.l_valid_moves):                                
             end_game = True
+            self.result = True
         return end_game
     
     def give_final_result(self,king):        
@@ -70,11 +73,11 @@ class Controler(ControlerBase):
             else:
                 self.board.history[-1] = \
                     self.board.history[-1].replace("+","#")
-            print(f"Check Mate: {king}")
-            print(self.board.history)
+            self.string_result = f"Check Mate: {king}"
         else:                    
-            print(f"{self.board.who_plays} cannot move")            
-            
+            self.string_result = f"{self.board.who_plays} cannot move"            
+        return
+    
     def give_who_plays(self):
         if self.board.who_plays == 'w':
             return self.board.w_king
@@ -191,8 +194,7 @@ class Controler(ControlerBase):
                 client.execute_with_delay(250)
                 self.IA_move(self.IA_level)
         elif self.game_type == 2:
-            self.user_vs_user()
-            self.i += 1
+            self.user_vs_user()            
         else:                        
             i = 0
             game_state = False
@@ -202,15 +204,7 @@ class Controler(ControlerBase):
                 if not game_state:
                     game_state = self.IA_move(self.IA2_level)
                     client.execute_with_delay(250)
-                    i += 1
-                    self.give_map_board()
-                    print(i)  
-            # game_state = self.IA_move(self.IA_level)
-            # client = self.clients[1]
-            # client.execute_with_delay(250)
-            # if not game_state:
-            #     game_state = self.IA_move(self.IA2_level) 
-            # self.i += 1
+                    i += 1          
             
     def save(self,fileName):   
         try:

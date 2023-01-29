@@ -38,37 +38,6 @@ def is_empty(l):
         else: 
             return False       
 
-
-def convert_notation(move): 
-    move=move.split('_')
-    piece=move[0][1]
-    debut=move[1]
-    fin=move[2]
-    if piece == 'p':
-        piece=''
-    else:
-        piece= piece.upper() 
-    return piece+debut+fin
-        
-
-def convert_pgn(moves):
-    myDate=datetime.datetime.now()
-    name_of_file=myDate.strftime('%Y_%m_%d_%H_%M_%S')
-    path=os.getcwd()+'\\parties\\'
-    f=open(path+name_of_file+'txt','w')
-    i=1
-    count=0
-    for move in moves:
-        move2=convert_notation(move)
-        if count%2 == 0:
-            f.write(str(i)+move2+' ')
-            count+=1
-        else:
-            f.write(move2+'\n')
-            count+=1
-            i=i+1
-    f.close()
-
 class Board():
     
     def __init__(self):   #initial board with all pieces in position      

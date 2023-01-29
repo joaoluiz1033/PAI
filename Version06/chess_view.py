@@ -1,6 +1,7 @@
 import sys
 import time
 
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -30,12 +31,40 @@ def clearLayout(self, layout):
                 self.clearLayout(item.layout())
                 
 
+def restart():
+    QtCore.QCoreApplication.quit()
+    status = QtCore.QProcess.startDetached(sys.executable, sys.argv)
+                
+
 class ClickableLabel(QLabel):
     
     clicked = pyqtSignal()    
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.clicked.emit()
+
+class labelGameState(QWidget):
+    
+    def __init__(self, parent, controler):
+        super().__init__(parent)
+        self.controler = controler
+        self.controler.addClient(self)
+        self.game_state = QTextEdit()
+        self.game_state.setPlainText("White's turn")
+        layout=QVBoxLayout()
+        layout.addWidget(self.game_state)
+        self.setLayout(layout)         
+        
+    def refresh(self):
+        if self.controler.result:
+            self.game_state.setPlainText(self.controler.string_result)
+        else:
+            player = self.controler.board.who_plays
+            if player == 'w':
+                self.game_state.setPlainText("White's turn")
+            else:
+                self.game_state.setPlainText("Black's turn")       
+    
             
 class ChessTimer(QWidget):
     
@@ -81,15 +110,20 @@ class ChessTimer(QWidget):
     def endTimer2(self):
         self.timer2.stop()        
     
-    def refresh(self):        
-        if self.controler.turn == 'w':
-            self.startTimer()
-            self.endTimer2()
-            self.showTime()
-        if self.controler.turn == 'b':
+    def refresh(self):
+        if not self.controler.result:        
+            if self.controler.turn == 'w':
+                self.startTimer()
+                self.endTimer2()
+                self.showTime()
+            if self.controler.turn == 'b':
+                self.endTimer()
+                self.startTimer2()
+                self.showTime2()
+        else:
             self.endTimer()
-            self.startTimer2()
-            self.showTime2()
+            self.endTimer2()
+            
             
 class ChessBoard(QWidget):
     
@@ -240,14 +274,7 @@ class ChessPieces(QWidget):
         loop.exec_()
         
     def refresh(self):
-        self.pieces()
-        # if self.controler.game_type == 3:
-        #     self.controler.game()
-        #     self.execute_with_delay(\
-        #                         lambda: self.controler.game(), 250)
-        # elif self.controler.game_type == 2:
-        #     self.execute_with_delay(\
-        #                         lambda: self.function_void(), 1000)  
+        self.pieces()        
 
 class SaveFile(QWidget):
     
@@ -266,7 +293,20 @@ class SaveFile(QWidget):
         fileName, _ = QFileDialog.getSaveFileName(self,\
               "QFileDialog.getOpenFileName()", ""," (*.pkl)", options=options)
         self.controler.save(fileName)
+
+
+class RestartInterface(QWidget):
     
+    def __init__(self, parent, controler):
+        super().__init__(parent)
+        self.controler = controler
+        self. res_button = QPushButton("Restart")
+        self.res_button.clicked.connect(restart)
+        layout = QVBoxLayout()
+        layout.addWidget(self.res_button)
+        self.setLayout(layout)  
+        
+        
 class chessUI(QWidget):
 
     def __init__(self, parent, controler):
@@ -274,14 +314,25 @@ class chessUI(QWidget):
         vlayout = QVBoxLayout()
         hlayout = QHBoxLayout()
         self.chess_board = ChessBoard(self, controler)
+        self.game_state = labelGameState(self,controler)
         if controler.game_type == 2 :         
             self.chess_timer = ChessTimer(self,controler)
-        self.save_options = SaveFile(self,controler)          
-        hlayout.addWidget(self.chess_board,0)
+        self.save_options = SaveFile(self,controler)
+        self.restart_options = RestartInterface(self,controler) 
+        vlayout_board = QVBoxLayout()          
+        vlayout_board.addWidget(self.chess_board,0)
+        vlayout_board.addWidget(self.game_state,1)
+        hlayout.addLayout(vlayout_board)          
+        vlayout_options = QVBoxLayout()
+        vlayout_options.addWidget(self.save_options)
+        vlayout_options.addWidget(self.restart_options)
+        vlayout_options.addStretch(1)
         if controler.game_type == 2:
-            hlayout.addWidget(self.chess_timer,1)      
-        hlayout.addWidget(self.save_options,1)  
-        vlayout.addLayout(hlayout,1)        
+           vlayout_time = QVBoxLayout() 
+           vlayout_time.addWidget(self.chess_timer,0)
+           hlayout.addLayout(vlayout_time)        
+        hlayout.addLayout(vlayout_options)
+        vlayout.addLayout(hlayout,0)        
         self.setLayout(vlayout)
 
 
@@ -454,7 +505,6 @@ class MainWindow(QMainWindow):
                 pass
     
 def main():
-    global app
     app = QApplication(sys.argv)
     controler = Controler()
     win = MainWindow(controler)   
