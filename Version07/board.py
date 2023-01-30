@@ -69,3 +69,18 @@ class Board():
                     print(y.name+' ',end='')                
             print('\n')
         return 
+    
+    def historyToString(self):
+        L = (len(self.history))
+        s = ''
+        aux = 1
+        for i in range(L):
+            j = i + 1;
+            if j%2 != 0:
+               s += str(aux) +' '
+               aux += 1
+            s += self.history[i] + ' '
+        return s
+            
+               
+           

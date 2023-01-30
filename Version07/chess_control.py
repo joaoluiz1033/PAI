@@ -43,10 +43,11 @@ class Controler(ControlerBase):
         self.timeMAX = 1
         self.result = False
         self.string_result = ''
+        self.time = 0
         
    
     def give_valid_moves(self):
-        self.l_possible_moves = self.model.possible_moves()            
+        self.l_possible_moves = self.model.possible_moves()          
         self.l_valid_moves = self.model.simulate_check(self.l_possible_moves)        
         return self.l_valid_moves
     
@@ -60,12 +61,13 @@ class Controler(ControlerBase):
     def give_who_plays(self): 
         return self.model.board.who_plays()
     
-    def give_game_state(self):
-        end_game = False
+    def give_game_state(self):        
+        end_game = False        
         if ch.is_empty(self.l_valid_moves):                                
             end_game = True
             self.result = True
         return end_game
+        
     
     def give_final_result(self,king):        
         if king.is_checked(self.l_enemy_moves):
@@ -74,10 +76,16 @@ class Controler(ControlerBase):
             else:
                 self.model.board.history[-1] = \
                     self.model.board.history[-1].replace("+","#")
-            self.string_result = f"Check Mate: {king}"
+            s = self.giveHistoryString()
+            self.string_result = f"Check Mate: {king}\n{s}"
         else:                    
-            self.string_result = f"{self.model.board.who_plays} cannot move"            
+            s = self.giveHistoryString()
+            self.string_result = \
+                f"{self.model.board.who_plays} cannot move\n{s}"            
         return
+    
+    def giveHistoryString(self):
+        return self.model.board.historyToString()
     
     def give_who_plays(self):
         if self.model.board.who_plays == 'w':
@@ -195,7 +203,11 @@ class Controler(ControlerBase):
                 client.execute_with_delay(250)
                 self.IA_move(self.IA_level)
         elif self.game_type == 2:
-            self.user_vs_user()            
+            if self.time == 0:
+                self.user_vs_user()
+            else:
+                self.l_valid_moves = []
+                self.refreshAll()
         else:                        
             i = 0
             game_state = False
@@ -210,7 +222,7 @@ class Controler(ControlerBase):
     def save(self,fileName):   
         try:
             f = open(fileName, 'wb')
-            pickle.dump([self.model.board.history,self.board], f)
+            pickle.dump([self.model.board.history,self.model], f)
             f.close()
             f = open(fileName, 'rb')
             obj = pickle.load(f)
@@ -222,9 +234,8 @@ class Controler(ControlerBase):
         f = open(fileName, 'rb')
         obj = pickle.load(f)
         f.close()        
-        self.board = obj[1]
+        self.model = obj[1]
         self.model.board.history = obj[0]
-        
         
 if __name__ == "__main__":
     pass

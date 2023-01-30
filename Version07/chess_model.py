@@ -227,16 +227,16 @@ class Game():
         old_x = old_xy[0]               
         if piece in pieces_board:                                
             if self.board.board_map[y][x] is not None:
-                if old_x != x:
-                    enemies_board.remove(self.board.board_map[y][x])     
-            else:
+                if self.board.board_map[y][x].name[1] == 'k':
+                    return []  
+                enemies_board.remove(self.board.board_map[y][x]) 
+                eliminate = True     
+            else:                
                 if piece.name[1] == 'p':
-                    if abs(old_x - x) != 0:                        
+                    if abs(old_x - x) != 0:                            
                         enemies_board.remove(self.board.board_map[y-add][x])
-            idx = pieces_board.index(piece)
-            pieces_board[idx].pos_alg = movement            
-            if piece.name[1] == 'k':
-                king.pos_alg = movement  
+                        eliminated = True                
+                      
         self.board.current_board()  
         return
     
@@ -263,16 +263,16 @@ class Game():
         for pair in l_possible_moves:
             piece = pair[0]
             piece_movements = pair[1]
-            piece_valid_movements = []            
+            piece_valid_movements = []
             for movement in piece_movements:
                 test_board = copy.deepcopy(self)
                 if test_board.board.who_plays == 'w':
                     king = test_board.board.w_king
                 else:
                     king = test_board.board.b_king
-                if piece.name[1] != 'k':    
+                if piece.name[1] != 'k':                    
                     test_board.move_piece(piece, movement)
-                    l_enemy_moves = test_board.possible_moves()                
+                    l_enemy_moves = test_board.possible_moves()
                     if not king.is_checked(l_enemy_moves):
                         piece_valid_movements.append(movement)
                 else:                    

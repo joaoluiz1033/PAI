@@ -240,3 +240,4 @@ def moveIA_view(game_model,level,l_possible_moves,l_enemy_moves):
             return []
         else:
             return l_possible_moves
+        

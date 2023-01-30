@@ -56,24 +56,32 @@ class labelGameState(QWidget):
         self.setLayout(layout)         
         
     def refresh(self):
-        if self.controler.result:
-            self.game_state.setPlainText(self.controler.string_result)
-        else:
-            player = self.controler.board.who_plays
-            if player == 'w':
-                self.game_state.setPlainText("White's turn")
+        s = self.controler.giveHistoryString()
+        if self.controler.time == 0:
+            if self.controler.result:
+                self.game_state.setPlainText(self.controler.string_result)
             else:
-                self.game_state.setPlainText("Black's turn")       
-    
+                player = self.controler.board.who_plays
+                if player == 'w':
+                    self.game_state.setPlainText(f"White's turn\n{s}")
+                else:
+                    self.game_state.setPlainText(f"Black's turn\n{s}") 
+        else:
+            if self.controler.time == 1:
+                self.game_state.setPlainText(f"Blacks win on time\n{s}")
+            else:
+                self.game_state.setPlainText(f"Whites win on time\n{s}")
             
 class ChessTimer(QWidget):
     
     def __init__(self,parent,controler):
         super().__init__(parent) 
+        self.setStyleSheet('font-size: 10pt; font-family: ArialBlack;')
         self.controler = controler 
         self.controler.addClient(self)
         self.label = QLabel('Label')
         layout=QVBoxLayout()
+        layout2=QVBoxLayout()
         self.timer = QTimer()
         self.timer.timeout.connect(self.showTime)
         self.time = QTime(0, self.controler.timeMAX, 0)
@@ -81,22 +89,39 @@ class ChessTimer(QWidget):
         self.timer2 = QTimer()
         self.timer2.timeout.connect(self.showTime2)
         self.time2 = QTime(0, self.controler.timeMAX, 0)
-        layout.addWidget(self.label2)
-        layout.addWidget(self.label)                  
+        self.editDesign()
+        layout2.addWidget(self.label2)
+        layout.addWidget(self.label)
+        layout_time = QVBoxLayout()
+        layout_time.addLayout(layout2)
+        layout_time.addLayout(layout)                  
         self.startTimer()
         self.showTime()   
         self.showTime2()         
-        self.setLayout(layout)
+        self.setLayout(layout_time)
+    
+    def editDesign(self):
+        font = QFont('Arial', 12, QFont.Bold)
+        self.label.setFont(font)
+        self.label2.setFont(font)
         
     def showTime(self):        
         self.time = self.time.addSecs(-1)
         timeDisplay = self.time.toString('mm:ss')
         self.label.setText(timeDisplay)
+        if timeDisplay == '00:00':
+            self.controler.time = 1
+            self.endTimer()
+            self.controler.game()
             
     def showTime2(self):
         self.time2 = self.time2.addSecs(-1)
         timeDisplay2 = self.time2.toString('mm:ss')
         self.label2.setText(timeDisplay2)
+        if timeDisplay2 == '00:00':
+            self.controler.time = 2
+            self.endTimer2()
+            self.controler.game()
 
     def startTimer(self):
         self.timer.start(1000)
@@ -111,24 +136,27 @@ class ChessTimer(QWidget):
         self.timer2.stop()        
     
     def refresh(self):
-        if not self.controler.result:        
-            if self.controler.turn == 'w':
-                self.startTimer()
-                self.endTimer2()
-                self.showTime()
-            if self.controler.turn == 'b':
+        if self.controler.time == 0:
+            if not self.controler.result:        
+                if self.controler.turn == 'w':
+                    self.startTimer()
+                    self.endTimer2()
+                    self.showTime()
+                if self.controler.turn == 'b':
+                    self.endTimer()
+                    self.startTimer2()
+                    self.showTime2()
+            else:
                 self.endTimer()
-                self.startTimer2()
-                self.showTime2()
-        else:
-            self.endTimer()
-            self.endTimer2()
+                self.endTimer2()
+        
+            
             
             
 class ChessBoard(QWidget):
     
     def __init__(self, parent, controler):
-        super().__init__(parent)        
+        super().__init__(parent)
         self.controler = controler 
         self.controler.addClient(self)        
         self.layout = QGridLayout()
@@ -148,11 +176,12 @@ class ChessBoard(QWidget):
         self.controler.game()         
         
     def board(self):
-        white = QPixmap(73,73)
+        s = 70
+        white = QPixmap(s,s)
         white.fill(QColor(Qt.white))
-        black = QPixmap(73,73)
+        black = QPixmap(s,s)
         black.fill(QColor(160,82,45))     
-        pos_color = QPixmap(73,73)
+        pos_color = QPixmap(s,s)
         pos_color.fill(QColor(131,111,255)) 
         for i in range(8):
             for j in range(8):                
@@ -223,6 +252,7 @@ class ChessPieces(QWidget):
   
             
     def pieces(self):
+        s = 70
         piece_map = self.controler.give_map() 
         if self.controler.user == 'w':        
             for x in range(8):
@@ -233,7 +263,7 @@ class ChessPieces(QWidget):
                         piece = ClickableLabel()
                         piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
-                        piece.setPixmap(piece_type.scaled(73,73))
+                        piece.setPixmap(piece_type.scaled(s,s))
                         piece.x = x
                         piece.j = j
                         piece.type = 'p'                        
@@ -248,7 +278,7 @@ class ChessPieces(QWidget):
                         piece = ClickableLabel()                  
                         piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
-                        piece.setPixmap(piece_type.scaled(73,73))
+                        piece.setPixmap(piece_type.scaled(s,s))
                         piece.x = 7 - x
                         piece.j = j   
                         piece.type = 'p'
@@ -265,10 +295,6 @@ class ChessPieces(QWidget):
         pass
     
     def execute_with_delay(self,delay):
-        # self.timer = QTimer()
-        # self.timer.setSingleShot(True)
-        # self.timer.timeout.connect(func)
-        # self.timer.start(delay)
         loop = QEventLoop()
         QTimer.singleShot(delay, loop.quit)
         loop.exec_()
@@ -340,12 +366,13 @@ class MainWindow(QMainWindow):
 
     def __init__(self, controler):
         super().__init__()
+        self.setStyleSheet('font-size: 10pt; font-family: Courier;')
         self.setWindowTitle("Xadrez")
         self.setWindowIcon(QIcon('./images/bk.png'))
         status_bar = QStatusBar()
         self.setStatusBar(status_bar)
         self.controler = controler
-        status_bar.showMessage('Xadrez version 4.0')         
+        status_bar.showMessage('Xadrez version 1.0')         
         self.game_type = QComboBox()
         self.game_type.addItems(["Player vs IA","Player vs Player",\
                                  "IA vs IA"])
@@ -372,7 +399,7 @@ class MainWindow(QMainWindow):
     def start_game(self):   
         self.mainwidget = chessUI(self,self.controler)
         self.setCentralWidget(self.mainwidget)
-        self.setGeometry(300, 100, 700, 500)
+        self.setGeometry(300, 35, 500, 200)
         return True
     
     def next_option(self, game_type):
