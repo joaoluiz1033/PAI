@@ -235,7 +235,11 @@ class Game():
                 if piece.name[1] == 'p':
                     if abs(old_x - x) != 0:                            
                         enemies_board.remove(self.board.board_map[y-add][x])
-                        eliminated = True                
+                        eliminated = True  
+            idx = pieces_board.index(piece)
+            pieces_board[idx].pos_alg = movement            
+            if piece.name[1] == 'k':
+                king.pos_alg = movement  
                       
         self.board.current_board()  
         return
