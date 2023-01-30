@@ -42,7 +42,28 @@ class ClickableLabel(QLabel):
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.clicked.emit()
-
+            
+            
+class startIAGame(QWidget):
+    
+    def __init__(self, parent, controler):    
+        super().__init__(parent)
+        self.controler = controler
+        self.controler.addClient(self)
+        self.start_button = QPushButton("Start")
+        self.start_button.clicked.connect(self.start)
+        layout = QVBoxLayout()
+        layout.addWidget(self.start_button)
+        self.setLayout(layout)
+        
+    def start(self):
+        self.controler.game()
+        self.start_button.setEnabled(False)
+        
+    def refresh(self):
+        pass       
+    
+    
 class labelGameState(QWidget):
     
     def __init__(self, parent, controler):
@@ -165,6 +186,8 @@ class ChessBoard(QWidget):
         if self.controler.user == 'b':
             self.controler.IA_initial_move()
         
+        
+        
     def square_clicked(self):
         piece = self.sender()
         self.controler.make_move = True
@@ -195,16 +218,17 @@ class ChessBoard(QWidget):
                     self.layout.addWidget(square, i, j)
                 else:
                     square = ClickableLabel() 
-                    square.clicked.connect(self.square_clicked)                  
+                    if self.controler.game_type < 3:
+                        square.clicked.connect(self.square_clicked)                  
                     square.setPixmap(black)  
                     square.x = -1
                     square.j = -1
                     square.type = 's'
-                    self.layout.addWidget(square, i, j)
-                
+                    self.layout.addWidget(square, i, j)                
                 for pos in self.controler.selected_moves_geo:
-                    square = ClickableLabel()            
-                    square.clicked.connect(self.move)                 
+                    square = ClickableLabel() 
+                    if self.controler.game_type < 3:
+                        square.clicked.connect(self.move)                 
                     square.setPixmap(pos_color)                    
                     square.j = pos[1]
                     square.x = pos[0]                    
@@ -235,7 +259,7 @@ class ChessPieces(QWidget):
         self.controler = controler
         self.controler.addClient(self)
         self.layout = layout
-        self.pieces()
+        self.pieces()          
         
     def piece_clicked(self):         
         piece = self.sender()
@@ -248,9 +272,8 @@ class ChessPieces(QWidget):
                     self.controler.game()
             else:
                 self.controler.make_move = False
-                self.controler.clicked_piece(piece)            
-  
-            
+                self.controler.clicked_piece(piece)
+                
     def pieces(self):
         s = 70
         piece_map = self.controler.give_map() 
@@ -261,7 +284,8 @@ class ChessPieces(QWidget):
                 for y in l:
                     if y is not None:
                         piece = ClickableLabel()
-                        piece.clicked.connect(self.piece_clicked)
+                        if self.controler.game_type < 3:
+                            piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
                         piece.setPixmap(piece_type.scaled(s,s))
                         piece.x = x
@@ -275,8 +299,9 @@ class ChessPieces(QWidget):
                 j = 0
                 for y in l:
                     if y is not None:
-                        piece = ClickableLabel()                  
-                        piece.clicked.connect(self.piece_clicked)
+                        piece = ClickableLabel() 
+                        if self.controler.game_type < 3:
+                            piece.clicked.connect(self.piece_clicked)
                         piece_type = inter_fun.add_piece(y.name)                                      
                         piece.setPixmap(piece_type.scaled(s,s))
                         piece.x = 7 - x
@@ -290,9 +315,6 @@ class ChessPieces(QWidget):
             self.layout.itemAt(i).widget().setParent(None)
             if len(self.layout) < 65:
                 break
-    
-    def function_void(self):
-        pass
     
     def execute_with_delay(self,delay):
         loop = QEventLoop()
@@ -351,7 +373,10 @@ class chessUI(QWidget):
         hlayout.addLayout(vlayout_board)          
         vlayout_options = QVBoxLayout()
         vlayout_options.addWidget(self.save_options)
-        vlayout_options.addWidget(self.restart_options)
+        vlayout_options.addWidget(self.restart_options)        
+        if controler.game_type == 3:
+            self.start_option = startIAGame(self,controler)
+            vlayout_options.addWidget(self.start_option)
         vlayout_options.addStretch(1)
         if controler.game_type == 2:
            vlayout_time = QVBoxLayout() 
@@ -360,7 +385,7 @@ class chessUI(QWidget):
         hlayout.addLayout(vlayout_options)
         vlayout.addLayout(hlayout,0)        
         self.setLayout(vlayout)
-
+        
 
 class MainWindow(QMainWindow):
 
@@ -498,6 +523,7 @@ class MainWindow(QMainWindow):
         self.start_button.setParent(None)
         self.start_button.clicked.connect(self.start_game)
         self.layout.addWidget(self.start_button)
+        
     
     def IA_vs_IA_level1(self):
         level1 = self.IA1_level.currentText()        

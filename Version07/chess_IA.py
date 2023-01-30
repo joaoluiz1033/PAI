@@ -28,26 +28,26 @@ def conquer_mid(board,possible_moves,enemy_moves):
     for pair in possible_moves:
         piece = pair[0]
         for movement in pair[1]:
-            score = piece.score
+            score = piece.score*0.3
             piece_xy = coordinates.convert_to_coordinate(piece.pos_alg)
             movement_xy = coordinates.convert_to_coordinate(movement)
             x = CENTER - movement_xy[0]
             y = CENTER - movement_xy[1]
-            score -= (x**2 + y**2)
+            #score -= (x**2 + y**2)*0.001
             l_score = [piece,movement,score]
             l_movements_scored.append(l_score)
             if piece.in_danger(movement,enemy_moves):
-                score -= piece.score/2 
+                score -= piece.score*0.5 
             board_test = copy.deepcopy(board)            
             infos = chMV.move_conquerIA(board_test,piece,movement,possible_moves)
             score_piece_removed = infos[1]
-            score += score_piece_removed
+            score += score_piece_removed*0.5
             l_to_seecheck = infos[0]
             board_test.change_who_plays()
-            if board_test.who_plays == 'w':
-                king = board_test.w_king
+            if board_test.board.who_plays == 'w':
+                king = board_test.board.w_king
             else:
-                king = board_test.b_king
+                king = board_test.board.b_king
             if king.is_checked(l_to_seecheck):
                 score += 1            
     l_movements_scored.sort(key=take_third,reverse=True)
