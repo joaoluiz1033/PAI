@@ -211,7 +211,7 @@ class Controler(ControlerBase):
         else:                        
             i = 0
             game_state = False
-            while game_state == False and i<100:                
+            while game_state == False and i<150:                
                 game_state = self.IA_move(self.IA_level)
                 client.execute_with_delay(250)
                 if not game_state:
