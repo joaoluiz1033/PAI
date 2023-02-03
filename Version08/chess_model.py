@@ -344,7 +344,6 @@ class Game():
     
     def move_IA(self, level, l_possible_moves, l_enemy_moves):
         return chMV.moveIA_view(self,level,l_possible_moves,l_enemy_moves)        
-        
             
                        
 if __name__ == "__main__":

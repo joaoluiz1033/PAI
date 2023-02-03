@@ -9,74 +9,36 @@ import pieces
 import coordinates
 
 def pawn_moves(g_pos,add_x,add_y,l,board_map,team): 
-    '''
-    Genereal move for pawn 
-    Parameters
-    ----------
-    g_pos : TYPE
-        DESCRIPTION.
-    add_x : TYPE
-        DESCRIPTION.
-    add_y : TYPE
-        DESCRIPTION.
-    l : TYPE
-        DESCRIPTION.
-    board_map : TYPE
-        DESCRIPTION.
-    team : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    None.
-
-    '''
-# describes general movement 
-#g_pos == current coordinates x,y
-#add_x, add_y == aditions coordinates in x,y
-#l == list with possible movements
-#board_map == board map with current pieces \
-    #board_map[y][x] is the correct use 
-#team == pieces' team (black or white)
      
     x = g_pos[0]
     y = g_pos[1]
     x_new = x + add_x
-    y_new = y + add_y
-    
+    y_new = y + add_y    
     limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
-    (y_new >= Y_MIN) and (y_new <= Y_MAX)
-    
+    (y_new >= Y_MIN) and (y_new <= Y_MAX)    
     if limits:
         if (board_map[y_new][x_new] == None) or \
             (board_map[y_new][x_new].team != team):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
-                l.append(possible_move)
-                
-                
-    
+                l.append(possible_move)    
     return l
 
 
-
 class pawn(pieces.pieces):
-    #pawn class inheritance of class pieces
-    
+   
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
         self.en_passante_moves = []
-        self.score = 1
-        
-              
+        self.score = 1  
+        self.global_score = self.score            
         
     def diags_possible(self,board_map):
         diags=[]
         l = []
         g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
         x = g_pos[0]
-        y = g_pos[1]
-        
+        y = g_pos[1]        
         if self.team =='w':
             if y < 7:
                 if x == 0:
@@ -126,7 +88,17 @@ class pawn(pieces.pieces):
             if y == Y_MIN:
                 return True
         return False 
-            
+    
+    def next_at_max(self):
+        cart_pos = coordinates.convert_to_coordinate(self.pos_alg)
+        y = cart_pos[1]
+        if self.team == 'w':
+            if y == Y_MAX - 1:
+                return True
+        else:
+            if y == Y_MIN + 1:
+                return True
+        return False
             
         
         

@@ -11,7 +11,11 @@ def debug_trace():
     set_trace()
 
 def move_conquerIA(game_model,piece,movement,l_possible_moves):
-    a = False       
+    a = False  
+    eliminated = False
+    roque1 = False
+    roque2 = False
+    constant = ''     
     if chMD.is_empty(l_possible_moves):
         return l_possible_moves
     else:            
@@ -43,18 +47,22 @@ def move_conquerIA(game_model,piece,movement,l_possible_moves):
                     return [] 
                 try:
                     enemies_game_model.remove(game_model.board.board_map[y][x])
+                    eliminated = True
                 except:
                     pdb.set_trace()                    
             else:
                 if piece.name[1] == 'p':
-                    if abs(old_x - x) != 0:                            
+                    if abs(old_x - x) != 0 and not eliminated:                            
                         enemies_game_model.remove(game_model.board.board_map[y-add][x]) 
+                        eliminated = True
                 elif  piece.name[1] == 'k' and abs(x - old_x) == 2:
                     if x > old_x:
+                        roque1 = True
                         idx_rook = game_model.find_rook(pieces_game_model, 1)
                         rook_pos = coordinates.reconvert_to_alg([x-1,y])
                         pieces_game_model[idx_rook].pos_alg = rook_pos
                     else:
+                        roque2 = True
                         idx_rook = game_model.find_rook(pieces_game_model, -1) 
                         rook_pos = coordinates.reconvert_to_alg([x+1,y])
                         pieces_game_model[idx_rook].pos_alg = rook_pos
@@ -78,8 +86,13 @@ def move_conquerIA(game_model,piece,movement,l_possible_moves):
                 elif abs(old_y - y) == 2:                        
                     game_model.register_en_passant(x,y,piece,add,enemies_game_model)
         game_model.board.current_board()
-        l_possible_moves2 = game_model.possible_moves()
-        
+        l_possible_moves2 = game_model.possible_moves()        
+        if eliminated:
+            constant = 'X'            
+        elif roque1:
+            constant = 'O-O'
+        elif roque2:
+            constant = 'O-O-O'
         if a:
             return []
         else:
@@ -239,7 +252,8 @@ def moveIA_view(game_model,level,l_possible_moves,l_enemy_moves):
         elif roque1:
             constant = 'O-O'
         elif roque2:
-            constant = 'O-O-O'        
+            constant = 'O-O-O'
+        #(piece.name+movement+constant)
         game_model.board.history.append(piece.name+movement+constant)        
         if a:
             return []

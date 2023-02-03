@@ -53,7 +53,7 @@ class Controler(ControlerBase):
         self.string_result = ''
         self.time = 0
         self.i = 0
-        self.iMax = 350
+        self.iMax = 200
    
     def give_valid_moves(self):
         self.l_possible_moves = self.model.possible_moves()          
@@ -217,6 +217,7 @@ class Controler(ControlerBase):
         if self.game_type == 1:
             if self.turn == self.user:
                 game_state = self.user_move()
+                self.L,game_state = self.model.board.numberOfPieces()
             if not game_state:
                 client.execute_with_delay(250)
                 self.IA_move(self.IA_level)
@@ -230,9 +231,11 @@ class Controler(ControlerBase):
             game_state = False
             while game_state == False and self.i<self.iMax:                
                 game_state = self.IA_move(self.IA_level)
+                self.L,game_state = self.model.board.numberOfPieces()
                 client.execute_with_delay(250)
                 if not game_state:
                     game_state = self.IA_move(self.IA2_level)
+                    self.L,game_state = self.model.board.numberOfPieces()
                     client.execute_with_delay(250)
                     self.i += 1
             self.give_final_result(self.give_who_plays())            

@@ -82,4 +82,18 @@ class Board():
             s += self.history[i] + ' '
         return s
                
+    def numberOfPieces(self):
+        L = len(self.whites_in_board) + len(self.blacks_in_board)
+        if L <= 3:
+            if L < 3:
+                return L,True
+            else:
+                for piece in self.whites_in_board:
+                    if piece.name[1] == 'n':
+                        return L,True
+                for piece in self.blacks_in_board:
+                    if piece.name[1] == 'n':
+                        return L,True
+        return L,False
+        
            

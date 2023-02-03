@@ -10,7 +10,8 @@ class pieces():
         self.name = name        
         self.pos_alg = pos
         self.score = 0
-        self.history_mov = []        
+        self.history_mov = []
+        self.global_score = 0        
         
     def __repr__(self):
         return f"{self.name} at {self.pos_alg}"
