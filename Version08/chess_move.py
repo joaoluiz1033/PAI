@@ -41,7 +41,8 @@ def move_conquerIA(game_model,piece,movement,l_possible_moves):
         old_x = old_xy[0]    
         score_piece_removed = 0                    
         if piece in pieces_game_model:                               
-            if game_model.board.board_map[y][x] is not None:
+            if game_model.board.board_map[y][x] is not None and \
+               game_model.board.board_map[y][x].name[0] != piece.name[0]:
                 score_piece_removed = game_model.board.board_map[y][x].score                    
                 if game_model.board.board_map[y][x].name[1] == 'k':
                     return [] 
@@ -127,15 +128,18 @@ def move_piece_view(game_model,l_possible_moves,piece,movement):
         old_xy = coordinates.convert_to_coordinate(piece.pos_alg)
         old_y = old_xy[1]
         old_x = old_xy[0]                        
-        if piece in pieces_game_model:                                   
-            if game_model.board.board_map[y][x] is not None:                    
+        if piece in pieces_game_model: 
+            if  piece.name[0] == 'w':
+                pass                              
+            if game_model.board.board_map[y][x] is not None and \
+               game_model.board.board_map[y][x].name[0] != piece.name[0]:                                
                 if game_model.board.board_map[y][x].name[1] == 'k':
                     return [] 
                 try:
                     enemies_game_model.remove(game_model.board.board_map[y][x])
-                    eliminated = True
+                    eliminated = True     
                 except:
-                    debug_trace()                    
+                    debug_trace()                   
             else:
                 if piece.name[1] == 'p':
                     if abs(old_x - x) != 0 and not eliminated:                            
@@ -210,7 +214,8 @@ def moveIA_view(game_model,level,l_possible_moves,l_enemy_moves):
         old_y = old_xy[1]
         old_x = old_xy[0]                 
         if piece in pieces_game_model:                              
-            if game_model.board.board_map[y][x] is not None:                    
+            if game_model.board.board_map[y][x] is not None and \
+               game_model.board.board_map[y][x].name[0] != piece.name[0]:                    
                 if game_model.board.board_map[y][x].name[1] == 'k':
                     return []  
                 enemies_game_model.remove(game_model.board.board_map[y][x]) 

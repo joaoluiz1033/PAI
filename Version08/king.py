@@ -7,31 +7,25 @@ import pdb
 import pieces 
 import coordinates
 
+def debug_trace():
+    from PyQt5.QtCore import pyqtRemoveInputHook
+    from pdb import set_trace
+    pyqtRemoveInputHook()
+    set_trace()
+
+
 def king_moves(g_pos,add_x,add_y,l,board_map,team):   
-# describes general movement 
-#g_pos == current coordinates x,y
-#add_x, add_y == aditions coordinates in x,y
-#l == list with possible movements
-#board_map == board map with current pieces \
-    #board_map[y][x] is the correct use 
-#team == pieces' team (black or white)
-     
     x = g_pos[0]
     y = g_pos[1]
     x_new = x + add_x
-    y_new = y + add_y
-    
+    y_new = y + add_y    
     limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
-    (y_new >= Y_MIN) and (y_new <= Y_MAX)
-    
+    (y_new >= Y_MIN) and (y_new <= Y_MAX)    
     if limits:
         if (board_map[y_new][x_new] == None) or \
             (board_map[y_new][x_new].team != team):
                 possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
-                l.append(possible_move)
-                
-                
-    
+                l.append(possible_move) 
     return l
 
 class king(pieces.pieces):
@@ -51,23 +45,21 @@ class king(pieces.pieces):
             x += add
         return True
     
-    def roque(self,board_map):
-        
-        l_possible_roque = []
-        
-        if len(self.history_mov) == 0:
-            
+    def roque(self,board_map):        
+        l_possible_roque = []        
+        if len(self.history_mov) == 0:            
             g_pos = coordinates.convert_to_coordinate(self.pos_alg)
             x = g_pos[0]
-            y = g_pos[1]
-            
-            if board_map[y][X_MAX] is not None:
+            y = g_pos[1] 
+            if board_map[y][X_MAX] is not None and \
+                board_map[y][X_MAX].name[0] == self.team:
                 if len(board_map[y][X_MAX].history_mov) == 0:
                     if self.can_reach(board_map,y,x,X_MAX,1):
                         g_roque = coordinates.reconvert_to_alg([x+2,y])
                         l_possible_roque.append(g_roque)
             if board_map[y][X_MIN] is not None:
-                if len(board_map[y][X_MIN].history_mov) == 0:
+                if len(board_map[y][X_MIN].history_mov) == 0 and \
+                board_map[y][X_MIN].name[0] == self.team:
                     if self.can_reach(board_map,y,x,X_MIN,-1):
                         g_roque = coordinates.reconvert_to_alg([x-2,y])
                         l_possible_roque.append(g_roque)

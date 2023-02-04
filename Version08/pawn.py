@@ -8,22 +8,13 @@ import pdb
 import pieces 
 import coordinates
 
-def pawn_moves(g_pos,add_x,add_y,l,board_map,team): 
-     
-    x = g_pos[0]
-    y = g_pos[1]
-    x_new = x + add_x
-    y_new = y + add_y    
-    limits = (x_new <= X_MAX) and (x_new >= X_MIN) and \
-    (y_new >= Y_MIN) and (y_new <= Y_MAX)    
-    if limits:
-        if (board_map[y_new][x_new] == None) or \
-            (board_map[y_new][x_new].team != team):
-                possible_move = coordinates.reconvert_to_alg([x_new,y_new])  
-                l.append(possible_move)    
-    return l
 
-
+def debug_trace():
+    from PyQt5.QtCore import pyqtRemoveInputHook
+    from pdb import set_trace
+    pyqtRemoveInputHook()
+    set_trace()
+    
 class pawn(pieces.pieces):
    
     def __init__(self,name,pos):
@@ -47,8 +38,7 @@ class pawn(pieces.pieces):
                     diags.append([x-1,y+1])
                 else:
                      diags.append([x-1,y+1])
-                     diags.append([x+1,y+1])
-                     
+                     diags.append([x+1,y+1])                     
         else:
           if y > 0:
               if x == 0:
@@ -99,17 +89,14 @@ class pawn(pieces.pieces):
             if y == Y_MIN + 1:
                 return True
         return False
-            
-        
-        
+          
 
     def check_moves(self,board_map):
         #check and return possible movements from pawn 
         l = []
         g_pos = coordinates.convert_to_coordinate(self.pos_alg) 
         x = g_pos[0]
-        y = g_pos[1]
-                
+        y = g_pos[1]                
         if self.team == 'w':
             if  y < Y_MAX:
                 y_new = y + 1   
@@ -137,25 +124,23 @@ class pawn(pieces.pieces):
                 y_new = y - 2
                 if board_map[y_new][x] is None and board_map[y_new+1][x] is None:
                     possible_move = coordinates.reconvert_to_alg([x,y_new])        
-                    l.append(possible_move)
-                    
-        if len(self.en_passante_moves) > 0:
-            
+                    l.append(possible_move)                    
+        if len(self.en_passante_moves) > 0:            
             if self.team == 'w':
                 add = 1
             else:
-                add = -1
-            
-            for possible_movement in self.en_passante_moves:
+                add = -1            
+            for possible_movement in self.en_passante_moves:                
                 geom_pos = coordinates.convert_to_coordinate(\
                  possible_movement)
                 x = geom_pos[0]
                 y = geom_pos[1]
-                if board_map[y-add][x] is not None:
-                    
-                    if board_map[y-add][x].name[1] == 'p' and \
-                        board_map[y-add][x].name[0] != self.team:
-                            l.append(possible_movement)
+                if board_map[y][x] is None:
+                    if board_map[y-add][x] is not None and \
+                        board_map[y-add][x].name[0] != self.name[0]:
+                        if board_map[y-add][x].name[1] == 'p' and \
+                            board_map[y-add][x].name[0] != self.team:
+                                l.append(possible_movement)
                 else:
                     self.en_passante_moves.remove(possible_movement)
             

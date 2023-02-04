@@ -56,7 +56,7 @@ class Controler(ControlerBase):
         self.iMax = 200
    
     def give_valid_moves(self):
-        self.l_possible_moves = self.model.possible_moves()          
+        self.l_possible_moves = self.model.possible_moves()       
         self.l_valid_moves = self.model.simulate_check(self.l_possible_moves)        
         return self.l_valid_moves
     
@@ -92,8 +92,11 @@ class Controler(ControlerBase):
             if self.i < self.iMax:
                 self.result = True                    
                 s = self.giveHistoryString()
-                self.string_result = \
+                if self.L > 3:
+                    self.string_result = \
                     f"{self.model.board.who_plays} cannot move\n{s}" 
+                else:
+                    self.string_result = "Draw"
             else:
                 self.result = True
                 s = self.giveHistoryString()

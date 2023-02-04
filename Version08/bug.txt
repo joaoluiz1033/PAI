@@ -1,0 +1,20 @@
+15:24 - 15:42 10% - 16:33 42% - 17:17 74% - 18:00 100%
+['wpc3', 'bpa6', 'wpg4', 'bra7', 'wpf3', 'bpf5', 'wpf5', 'bkf7', 'wqb3', 'bpe6', 'wpf6', 'bpb6', 'wpa3', 'bpb5', 'wpa4', 'bph5', 'wph4', 'bbd6', 'wpf4', 'bpb4', 'wqe6', 'bke6', 'wpa5', 'bkf7', 'wpb4', 'bnf6', 'wpd3', 'bbb7', 'wpe4', 'bbb4', 'wnd2', 'bra8', 'wpb3', 'bnd5', 'wpe5', 'bra7', 'wpd4', 'bba3', 'wba3', 'bnb6', 'wpb6', 'bpd5', 'wpa7', 'bpa5', 'wbd6']
+
+linha 69 move_conquer IA
+['wpb4', 'bnf6', 'wpa4', 'bpa6', 'wpe4', 'bnc6', 'wpa5', 'bpd6', 'wpg4', 'bpg5', 'wpf3', 'brg8', 'wpd4', 'bpe5', 'wbg5', 'brg6', 'wpe5', 'bpb6', 'wbf6', 'bpe5', 'wqd8', 'bnd8', 'wpg5', 'bkd7', 'wbg7', 'bpf5', 'wbf6', 'brh6', 'wpg6', 'bkd6', 'wph7', 'bnf7'] 
+
+linha 252 chess_model
+['wpb4', 'bpe5', 'wpg4', 'bnf6', 'wpe4', 'bke7', 'wpd4', 'bpb5', 'wpa3', 'brg8', 'wpd5', 'bbb7', 'wpa4', 'bpa5', 'wpb5', 'bqe8', 'wpf4', 'bpg6', 'wpb6', 'bpd6', 'wpb5', 'bbc8', 'wpc4', 'bpf4', 'wpb7', 'brg7=Q', 'wpa8', 'bpc5', 'wqc6']   
+
+chessIA linha 56
+['wpe3', 'bpc5', 'wpg4', 'bnc6', 'wpc4', 'bpb5', 'wpd4', 'bpg6', 'wpb5', 'bbg7', 'wpb4', 'bbd4', 'wpc6', 'bpb4', 'wpd4', 'bpe5', 'wpd7', 'bqd7', 'wpd5', 'bpe4', 'wpa4', 'bph5', 'wph4', 'bnh6', 'wpa5', 'bba6', 'wpg5', 'bpe3', 'wph6', 'bpb3', 'wpf3', 'bbc4', 'wph7', 'bpe2', 'wpa6=Q', 'bpf1', 'wkd2', 'bqf2', 'wne2', 'bkg8O-O']
+ 
+chessIA linha 56
+['wpc3', 'bph5', 'wpf3', 'bpa6', 'wph4', 'brh7', 'wpb3', 'bpc6', 'wpg4', 'bpg6', 'wpf4', 'bpg5', 'wpe4', 'bpe6', 'wpg5', 'bpg4', 'wpa3', 'bpg3', 'wpg6', 'bpc5', 'wbg2', 'bne7', 'wph7', 'bpd6', 'wpd4', 'bpd5', 'wpa4', 'bbh6', 'wpe5', 'bpd4=Q', 'wph8', 'bkg8O-O']   
+
+chessIA linha 56
+['wpf3', 'bpf6', 'wpg3', 'bpd5', 'wpe4', 'bpg5', 'wpd4', 'bpb6', 'wpe5', 'bbg7', 'wph3', 'bnh6', 'wph4', 'bpe6', 'wpg5', 'bpb5', 'wpf6', 'bpb4', 'wrh6', 'bpc5', 'wpf7', 'bkg8O-O']      
+
+chessIA linha 56
+['wpa4', 'bnh6', 'wpb3', 'bpc5', 'wpg4', 'bpb6', 'wpc4', 'bpb5', 'wpg5', 'bnf5', 'wpb5', 'bpg6', 'wpe3', 'bpf6', 'wpe4', 'bba6', 'wph4', 'bqb6', 'wpf5', 'bpd6', 'wph5', 'bbg7', 'wpg6', 'bpc4', 'wpd4', 'bpg5', 'wph7', 'bkg8O-O']   
