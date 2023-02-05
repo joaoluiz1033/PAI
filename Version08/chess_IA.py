@@ -102,7 +102,7 @@ def easyLevel(board,possible_moves,enemy_moves):
     return [l,idx_pawn,piece,movement]
 
 
-def mediumLevel(board,possible_moves,enemy_moves):
+def mediumLevelDepth(board,possible_moves,enemy_moves):
     l_movements_scored = []
     max_piece = 9
     for pair in possible_moves:
@@ -215,6 +215,81 @@ def mediumLevel(board,possible_moves,enemy_moves):
             idx_pawn = possible_moves.index(elem)
     piece = vec[0]
     movement = vec[1]    
+    try:
+        l = possible_moves[idx_pawn]
+    except:
+        l = infos[2][idx_pawn]
+    return [l,idx_pawn,piece,movement]
+
+
+def mediumLevel(board,possible_moves,enemy_moves):
+    l_movements_scored = []
+    max_piece = 9
+    for pair in possible_moves:
+        piece = pair[0]
+        actual_danger = False
+        piece_xy = coordinates.convert_to_coordinate(piece.pos_alg)
+        if piece.in_danger(piece_xy,enemy_moves):
+            actual_danger = True            
+        for movement in pair[1]:
+            score = piece.global_score           
+            movement_xy = coordinates.convert_to_coordinate(movement)
+            if actual_danger:
+                score += 11*piece.score 
+            board_test = copy.deepcopy(board)            
+            if piece.name[1] == 'p':
+                if piece.next_at_max:
+                    score += 10
+            infos = chMV.move_conquerIA(board_test,piece,movement,possible_moves)
+            try:
+                score_piece_removed = infos[1]
+            except:
+                debug_trace()            
+            l_to_seecheck = infos[2]
+            board_test.change_who_plays()
+            if board_test.board.who_plays == 'w':
+                king = board_test.board.w_king
+            else:
+                king = board_test.board.b_king
+            m = board_test.possible_moves()
+            m = board_test.simulate_check(m)
+            danger = piece.in_danger(movement,m)
+            if danger:
+                score -= 10*piece.score
+                danger = True
+            if score_piece_removed > 0:
+                if not danger:
+                    score += 10*(score_piece_removed/piece.score)                    
+                else:
+                    score -= 10*(score_piece_removed/piece.score)
+            if king.is_checked(l_to_seecheck) :               
+                if not danger:                    
+                    score += 10*piece.score
+                else:
+                    score -= 100*piece.score
+            l_score = [piece,movement,score]
+            l_movements_scored.append(l_score)
+    l_movements_scored.sort(key=take_third,reverse=True)
+    score_max = l_movements_scored[0][2]
+    l_movements_max = []
+    for list_movements in l_movements_scored:
+        possible_danger = list_movements[1]
+        if not piece.in_danger(movement,enemy_moves):
+            if list_movements[2] == score_max:
+                l_movements_max.append(list_movements)
+    if len(l_movements_max) == 0:
+        for list_movements in l_movements_scored:
+            if list_movements[2] == score_max:
+                l_movements_max.append(list_movements)
+    vec = random.choice(l_movements_max)   
+    for elem in infos[0]:
+        if elem[0] == vec[0]:
+            idx_pawn = possible_moves.index(elem)
+    piece = vec[0]
+    movement = vec[1]
+    # if piece.global_score != 0 :
+    #     score = vec[2]/(piece.global_score)
+    # piece.global_score = score 
     try:
         l = possible_moves[idx_pawn]
     except:

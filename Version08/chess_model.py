@@ -263,8 +263,7 @@ class Game():
         l_enemy_moves = []        
         end_game = False        
         i = 0
-        while not end_game and i <90: 
-            print(i)
+        while not end_game and i <90:
             L,insuf = self.board.numberOfPieces()
             if insuf:
                 print("Draw - Not enough pieces")
@@ -293,7 +292,7 @@ class Game():
                 if self.board.who_plays == 'w':
                     
                     self.l_enemy_moves = chMV.moveIA_view(self,\
-                                  3,self.l_valid_moves,self.l_enemy_moves)
+                                  2,self.l_valid_moves,self.l_enemy_moves)
                 else:
                     self.l_enemy_moves = chMV.moveIA_view(self,\
                                   1,self.l_valid_moves,self.l_enemy_moves)
@@ -319,7 +318,7 @@ class Game():
         return chMV.moveIA_view(self,level,l_possible_moves,l_enemy_moves)        
         
 if __name__ == "__main__":
-    tests = 1
+    tests = 1000
     possibleResults = 7
     vecRes =  np.zeros((tests,), dtype=int)
     data = np.zeros((possibleResults,), dtype=int)
@@ -329,12 +328,13 @@ if __name__ == "__main__":
         try: #erro na chess_IA linha 52
             result = M.game()
             result = np.int32(result)    
-            M.board.prt()        
+            #M.board.prt()        
             data[result] += np.int32(1)  
         except:
+            print("aqui")
             data[possibleResults-1] += np.int32(1)
     counts = [0,1,2,3,4,5,6,7]
-    save('mediumSimul',range(len(data)),data)
+    save('Simulation03_EasyvsRandom',range(len(data)),data)
 
       
         

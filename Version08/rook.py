@@ -48,7 +48,6 @@ class rook(pieces.pieces):
         super().__init__(name,pos)
         self.team = name[0]
         self.score = 5
-        self.global_score = self.score
         
     
     def check_moves(self,board_map):

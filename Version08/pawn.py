@@ -21,8 +21,7 @@ class pawn(pieces.pieces):
         super().__init__(name,pos)
         self.team = name[0]
         self.en_passante_moves = []
-        self.score = 1  
-        self.global_score = self.score            
+        self.score = 1         
         
     def diags_possible(self,board_map):
         diags=[]

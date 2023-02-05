@@ -53,7 +53,7 @@ class Controler(ControlerBase):
         self.string_result = ''
         self.time = 0
         self.i = 0
-        self.iMax = 200
+        self.iMax = 90
    
     def give_valid_moves(self):
         self.l_possible_moves = self.model.possible_moves()       
@@ -96,7 +96,7 @@ class Controler(ControlerBase):
                     self.string_result = \
                     f"{self.model.board.who_plays} cannot move\n{s}" 
                 else:
-                    self.string_result = "Draw"
+                    self.string_result = "Draw\n{s}"
             else:
                 self.result = True
                 s = self.giveHistoryString()
@@ -232,14 +232,15 @@ class Controler(ControlerBase):
                 self.refreshAll()
         else:
             game_state = False
-            while game_state == False and self.i<self.iMax:                
+            game_state2 = False
+            while (not game_state and not game_state2) and self.i<self.iMax:                
                 game_state = self.IA_move(self.IA_level)
-                self.L,game_state = self.model.board.numberOfPieces()
+                self.L,game_state2 = self.model.board.numberOfPieces()
                 client.execute_with_delay(250)
-                if not game_state:
+                if not game_state and not game_state2:
                     game_state = self.IA_move(self.IA2_level)
-                    self.L,game_state = self.model.board.numberOfPieces()
-                    client.execute_with_delay(250)
+                    self.L,game_state2 = self.model.board.numberOfPieces()
+                    client.execute_with_delay(250)                    
                     self.i += 1
             self.give_final_result(self.give_who_plays())            
             

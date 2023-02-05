@@ -34,8 +34,7 @@ class king(pieces.pieces):
     def __init__(self,name,pos):
         super().__init__(name,pos)
         self.team = name[0]
-        self.score = 9
-        self.global_score = self.score
+        self.score = 1
     
     def can_reach(self,board_map,y,x,x_target,add):
         x += add
