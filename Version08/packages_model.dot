@@ -1,0 +1,7 @@
+digraph "packages_model" {
+charset="utf-8"
+rankdir=BT
+"0" [label="board", shape="box"];
+"1" [label="chess_model", shape="box"];
+"1" -> "0" [arrowhead="open", arrowtail="none"];
+}

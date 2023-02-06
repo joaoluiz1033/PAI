@@ -1,0 +1,5 @@
+digraph "classes_model" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{board.Board|b_king : king\lblacks_in_board : list\lboard_map\lhistory : list\lw_king : king\lwhites_in_board : list\lwho_plays : str\l|current_board()\lhistoryToString()\lnumberOfPieces()\lprt()\l}", shape="record"];
+}

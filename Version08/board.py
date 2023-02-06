@@ -96,4 +96,5 @@ class Board():
                         return L,True
         return L,False
         
-           
+if __name__ == "__main__":
+    b = Board()

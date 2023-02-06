@@ -75,7 +75,7 @@ class Board():
         s = ''
         aux = 1
         for i in range(L):
-            j = i + 1;
+            j = i + 1
             if j%2 != 0:
                s += str(aux) +' '
                aux += 1

@@ -12,7 +12,7 @@ def load(fileName):
     return vector
 
 if __name__ == "__main__":
-    data = load('Simulation02_MediumvsRandom')
+    data = load('Simulation03_Dany_Easyvsok')
     #data2 = [data[6], data[0],data[1],data[2],data[3],data[4],data[5]]
     # Switching to the OO-interface. You can do all of this with "plt" as well.
     fig, ax = plt.subplots()
@@ -23,5 +23,5 @@ if __name__ == "__main__":
     for i, v in enumerate(data):
         plt.text(xlocs[i] - 0.25, v + 0.01, str(v))
     plt.grid(zorder = 0)
-    plt.title('Normal level : AI (w) vs random (b)')
-    plt.savefig('Simulation02.png')
+    plt.title(' Easy AI (w) vs Normal AI (b)')
+    plt.savefig('SimulationFinal_whiteEasyNormal.png')

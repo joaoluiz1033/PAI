@@ -1,0 +1,23 @@
+digraph "packages_teste" {
+charset="utf-8"
+rankdir=BT
+"0" [label="board", shape="box"];
+"1" [label="chess_IA", shape="box"];
+"2" [label="chess_control", shape="box"];
+"3" [label="chess_model", shape="box"];
+"4" [label="chess_move", shape="box"];
+"5" [label="chess_view", shape="box"];
+"6" [label="pieces", shape="box"];
+"0" -> "6" [arrowhead="open", arrowtail="none"];
+"1" -> "3" [arrowhead="open", arrowtail="none"];
+"1" -> "4" [arrowhead="open", arrowtail="none"];
+"2" -> "0" [arrowhead="open", arrowtail="none"];
+"2" -> "3" [arrowhead="open", arrowtail="none"];
+"3" -> "0" [arrowhead="open", arrowtail="none"];
+"3" -> "1" [arrowhead="open", arrowtail="none"];
+"3" -> "4" [arrowhead="open", arrowtail="none"];
+"3" -> "6" [arrowhead="open", arrowtail="none"];
+"4" -> "1" [arrowhead="open", arrowtail="none"];
+"4" -> "3" [arrowhead="open", arrowtail="none"];
+"5" -> "2" [arrowhead="open", arrowtail="none"];
+}

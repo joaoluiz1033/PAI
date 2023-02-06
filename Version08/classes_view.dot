@@ -1,0 +1,22 @@
+digraph "classes_view" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{ChessBoard|board_pieces\lcontroler\llayout\l|board()\ldelete_piece()\lmove()\lrefresh()\lsquare_clicked()\l}", shape="record"];
+"1" [label="{ChessPieces|controler\llayout\l|delete_piece()\lexecute_with_delay(delay)\lpiece_clicked()\lpieces()\lrefresh()\l}", shape="record"];
+"2" [label="{ChessTimer|controler\llabel\llabel2\ltime\ltime2\ltimer\ltimer2\l|editDesign()\lendTimer()\lendTimer2()\lrefresh()\lshowTime()\lshowTime2()\lstartTimer()\lstartTimer2()\l}", shape="record"];
+"3" [label="{ClickableLabel|clicked\lj : int\ltype : str\lx : int\l|mousePressEvent(event: QMouseEvent)\l}", shape="record"];
+"4" [label="{MainWindow|IA1_level\lIA2_level\lIA_level\lUser_team\lcontroler\lgame_type\llayout\lload\lmainwidget\lstart_button\ltime_max\l|IA_vs_IA()\lIA_vs_IA_level1()\lIA_vs_IA_level2()\lIA_vs_player_level()\lIA_vs_player_team()\lchange_time()\lloadFile()\lnext_option(game_type)\lplayer_vs_IA()\lplayer_vs_player()\lstart_game()\l}", shape="record"];
+"5" [label="{RestartInterface|controler\lres_button\l|}", shape="record"];
+"6" [label="{SaveFile|controler\lhist : list\lsave_button\l|save_data()\l}", shape="record"];
+"7" [label="{chessUI|chess_board\lchess_timer\lgame_state\lrestart_options\lsave_options\lstart_option\l|}", shape="record"];
+"8" [label="{labelGameState|controler\lgame_state\l|refresh()\l}", shape="record"];
+"9" [label="{startIAGame|controler\lstart_button\l|refresh()\lstart()\l}", shape="record"];
+"0" -> "7" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="chess_board", style="solid"];
+"1" -> "0" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="board_pieces", style="solid"];
+"2" -> "7" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="chess_timer", style="solid"];
+"5" -> "7" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="restart_options", style="solid"];
+"6" -> "7" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="save_options", style="solid"];
+"7" -> "4" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="mainwidget", style="solid"];
+"8" -> "7" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="game_state", style="solid"];
+"9" -> "7" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="start_option", style="solid"];
+}

@@ -295,7 +295,7 @@ class Game():
                                   2,self.l_valid_moves,self.l_enemy_moves)
                 else:
                     self.l_enemy_moves = chMV.moveIA_view(self,\
-                                  1,self.l_valid_moves,self.l_enemy_moves)
+                                  3,self.l_valid_moves,self.l_enemy_moves)
                 self.l_enemy_moves = self.simulate_check(self.l_enemy_moves)
                 self.change_who_plays()            
             i += 1       
